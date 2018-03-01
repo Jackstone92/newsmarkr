@@ -1,0 +1,18 @@
+<!-- create macro for form -->
+
+{% macro render_field(field) %}
+  <div class="form-group">
+    {{ field.label }}
+    <!-- field|safe required -->
+    <!-- can pass keyword arguments to below -->
+    {{ field(**kwargs)|safe }}
+    <!-- display fullname errors -->
+    {% if field.errors %}
+    <ul class="text-danger">
+      {% for error in field.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+{% endmacro %}

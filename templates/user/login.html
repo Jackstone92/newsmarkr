@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}User Login{% endblock %}
+
+{% block content %}
+
+
+
+<div style="height:90vh; width:100vw; display:flex; justify-content:center; align-items:center; background-color: #eaecef">
+  <div style="border: 2px solid black; border-radius:5px; padding: 30px; background-color: white">
+    <h3 class="text-center">User Login</h3>
+
+    {% if error %}
+      <div class="error text-danger">{{ error }}</div>
+    {% endif %}
+
+    <!-- form -->
+    {% from "_formhelpers.html" import render_field %}
+
+    <form method="POST" action="{{ url_for('login') }}" role="form" style="display:flex; flex-direction: column; align-items:center; justify-content:center;">
+
+      {{ form.hidden_tag() }}
+
+      {{ render_field(form.username, class='form-control') }}
+      {{ render_field(form.password, class='form-control') }}
+
+      <button type='submit' class='btn btn-primary'>Login</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
