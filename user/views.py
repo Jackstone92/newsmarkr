@@ -49,7 +49,7 @@ def login():
                     return redirect(next)
                 else:
                     # go straight to index
-                    return redirect(url_for('index'))
+                    return redirect(url_for('library'))
             else:
                 error = "Incorrect username and password"
         else:
@@ -105,7 +105,7 @@ def signup():
             # if success, flash
             flash("Newsmarkr Library Created!")
             # redirect to user library
-            return redirect(url_for('library'))
+            return redirect(url_for('login'))
         else:
             # rollback
             db.session.rollback()
@@ -114,7 +114,6 @@ def signup():
 
     # render template and pass in form
     return render_template('user/signup.html', form=form, error=error)
-
 
 
 @app.route('/logout')

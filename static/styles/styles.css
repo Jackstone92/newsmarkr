@@ -1,0 +1,57 @@
+/* ======== navbar ======== */
+nav {
+  background-color: #1b2c3e;
+}
+
+nav a {
+  color: white !important;
+}
+
+
+/* ======== Login ======== */
+.login {
+  height: 90vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #eaecef
+}
+
+.login .login__border {
+  border: 2px solid black;
+  border-radius:5px;
+  padding: 30px;
+  background-color: white;
+}
+
+.login form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ======== Signup ======== */
+.signup {
+  height:90vh;
+  width:100vw;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background-color: #eaecef;
+}
+
+.signup__border {
+  border: 2px solid black;
+  border-radius:5px;
+  padding: 30px;
+  background-color: white;
+}
+
+.signup form {
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content:center;
+}

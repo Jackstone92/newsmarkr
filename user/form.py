@@ -1,12 +1,12 @@
 # WTForms
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import validators, StringField, PasswordField
 from wtforms.fields.html5 import EmailField
 
 # create class that creates form fields
 # pass in Form (from flask_wtf)
 # signup form class
-class SignupForm(Form):
+class SignupForm(FlaskForm):
     name = StringField('Library name', [
         validators.Required(),
         validators.Length(max=80)
@@ -29,7 +29,7 @@ class SignupForm(Form):
 
 
 # login form class
-class LoginForm(Form):
+class LoginForm(FlaskForm):
     username = StringField('Username', [
         validators.Required(),
         validators.Length(min=4, max=25)

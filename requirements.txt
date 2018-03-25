@@ -8,3 +8,7 @@ py-bcrypt
 python-slugify
 flask-markdown
 flask-uploads
+beautifulsoup4
+lxml
+html5lib
+requests
