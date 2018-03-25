@@ -1,21 +1,19 @@
 # import app from root (from __init__.py)
 from flask_newsmarkr import app
-from flask import render_template, redirect, url_for, session, request
+from flask import render_template, redirect, url_for, session, request, flash
 
+from flask_newsmarkr import db
 # import login and signup forms from form.py
 from user.form import SignupForm, LoginForm
 # user.models to check in database
+from user.models import User
+from bookmark.models import Library
 
 # import bcrypt to unhash password
 import bcrypt
 
 # import custom decorators
 from user.decorators import login_required
-
-
-@app.route('/')
-def index():
-    return 'hello world!'
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -57,3 +55,71 @@ def login():
         else:
             error = "Incorrect username and password"
     return render_template('user/login.html', form=form, error=error)
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    # instantiate form
+    form = SignupForm()
+    # set up blank error
+    error = None
+    # check form was submitted - checks that form didn't have any errors (from validators)
+    if form.validate_on_submit():
+        # generate salt (random hash used to generate new password)
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(form.password.data, salt)
+
+        # create a user from those form records
+        user = User(
+            # access form data by .data
+            form.fullname.data,
+            form.email.data,
+            form.username.data,
+            hashed_password,
+            True
+        )
+
+        # add to database
+        db.session.add(user)
+        # flush - sqlalchemy simulates that record is written, and provide id etc. However, doesn't hit database yet - can always throw back
+        db.session.flush()
+        # if we have user id - validation
+        if user.id:
+            # build a library object and pass in user id as foreign key
+            library = Library(
+                form.name.data,
+                user.id
+            )
+            # add library to database
+            db.session.add(library)
+            db.session.flush()
+        else:
+            # undo flush by rollback()
+            db.session.rollback()
+            error = "Error creating user"
+
+        # check both before committing to db
+        if user.id and library.id:
+            # actually commit transaction to database
+            db.session.commit()
+            # if success, flash
+            flash("Newsmarkr Library Created!")
+            # redirect to user library
+            return redirect(url_for('library'))
+        else:
+            # rollback
+            db.session.rollback()
+            error = "Error creating Newsmarkr library"
+            flash(error)
+
+    # render template and pass in form
+    return render_template('user/signup.html', form=form, error=error)
+
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    session.pop('username')
+    session.pop('is_admin')
+    return redirect(url_for('index'))

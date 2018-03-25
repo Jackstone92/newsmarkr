@@ -5,24 +5,24 @@ from flask_newsmarkr import db
 
 # in order to add tables to database:
     # in terminal, type 'python manage.py shell'
-    # import db into shell: 'from flask_blog import db'
-    # import author models into shell: 'from author.models import *'
+    # import db into shell: 'from flask_newsmarkr import db'
+    # import user models into shell: 'from user.models import *'
     # create database by calling 'db.create_all()'
 
-# to add instance of author using 'python manage.py shell':
-    # 'from flask_blog import db'
-    # 'from author.models import *'
-    # 'author = Author('Jack Stone', 'test@test.com', 'jack', '12345', True)'
-    # 'author' -> repr -> <Author jack>
-    # precommit to database (for multiple additions) - 'db.session.add(author)'
+# to add instance of user using 'python manage.py shell':
+    # 'from flask_newsmarkr import db'
+    # 'from user.models import *'
+    # 'user = User('Jack Stone', 'test@test.com', 'jack', '12345', True)'
+    # 'user' -> repr -> <User jack>
+    # precommit to database (for multiple additions) - 'db.session.add(user)'
     # commit entries to database - 'db.session.commit()'
 
 # to query entries:
     # return all in list:
-        # 'authors = Author.query.all()'
-        # 'authors' -> [<Author jack>, <Author tessa>]
+        # 'users = User.query.all()'
+        # 'users' -> [<User jack>, <User tessa>]
     # filter by:
-        # 'authors = Author.query.filter_by(username='jack').first()'
+        # 'users = User.query.filter_by(username='jack').first()'
 
 # to remove all data from database:
     # COMMIT FIRST - 'db.session.commit()'
@@ -40,7 +40,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean)
 
     # bookmarks relationship with user -> so that we can do bookmarks.user and get the bookmarks' user
-    bookmarks = db.relationship('Bookmarks', backref='user', lasy='dynamic')
+    bookmarks = db.relationship('Bookmark', backref='user', lazy='dynamic')
 
     # constructor called when class is instantiated for first time
     def __init__(self, fullname, email, username, password, is_admin=False):

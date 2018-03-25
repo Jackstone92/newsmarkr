@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Signup{% endblock %}
+
+
+{% block content %}
+<!-- using WTForms -->
+<div style="height:90vh; width:100vw; display:flex; justify-content:center; align-items:center; background-color: #eaecef">
+  <div style="border: 2px solid black; border-radius:5px; padding: 30px; background-color: white">
+    <h3>User Signup</h3>
+
+    <!-- include macros in this template (like standard python import statements) -->
+    {% from "_formhelpers.html" import render_field %}
+
+    <form method="POST" action="{{ url_for('signup') }}" role="form" style="display:flex; flex-direction: column; align-items:center; justify-content:center;">
+      <!-- always use this at start of each form to ensure form is secure!!!! -->
+      {{ form.hidden_tag() }}
+
+      <!-- use macros for form inputs and pass in kwargs class -->
+      {{ render_field(form.name, class="form-control") }}
+      {{ render_field(form.fullname, class="form-control") }}
+      {{ render_field(form.email, class="form-control") }}
+      {{ render_field(form.username, class="form-control") }}
+      {{ render_field(form.password, class="form-control") }}
+      {{ render_field(form.confirm, class="form-control") }}
+
+      <button type="submit" class="btn btn-primary">Signup</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -18,3 +18,4 @@ migrate = Migrate(app, db)
 
 # import all views (controllers)
 from user import views
+from bookmark import views
