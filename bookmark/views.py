@@ -9,9 +9,6 @@ from bookmark.models import Library, Bookmark, Category
 # import custom decorators
 from user.decorators import login_required
 
-# import bcrypt for password hashing
-import bcrypt
-
 # import python-slugify for slug generation
 from slugify import slugify
 
@@ -30,13 +27,20 @@ def index():
 def library():
     form = ScrapeForm()
 
-    if form.validate_on_submit():
-        flash(form.url.data)
+    error = None
 
-    return render_template('bookmark/library.html', form=form)
+    # get all bookmarks in library
+    current_user = User.query.filter_by(username=session['username']).first()
+    library = Library.query.filter_by(user_id=current_user.id).first()
+    if current_user and library:
+        bookmarks = Bookmark.query.filter_by(library_id=library.id)
+    else:
+        error = 'No bookmarks currently found in your library...'
 
+    return render_template('bookmark/library.html', form=form, bookmarks=bookmarks, error=error)
 
-@app.route('/scrape', methods=['Get', 'POST'])
+@app.route('/scrape', methods=['POST'])
+@app.route('/library/scrape', methods=['POST'])
 def scrape():
     form = ScrapeForm()
     error = None
@@ -62,16 +66,40 @@ def scrape():
         if library:
             # add bookmark to db
             title = meta['title']
-            # description = meta['description']
-            description = 'this is a test'
+            description = meta['description']
+            # description = 'this is a test'
             url = meta['url']
             image = meta['image']
+            source = meta['source']
             slug = slugify(title)
 
-            bookmark = Bookmark(library, current_user, category, slug, url, title, description, image, None, None, 0, 0, None)
+            bookmark = Bookmark(library, current_user, category, slug, url, title, source, description, image, None, None)
             db.session.add(bookmark)
-            db.session.flush()
             db.session.commit()
             return redirect(url_for('library'))
+        else:
+            error = 'Please try a different URL...'
+    else:
+        error = 'Please try a different URL...'
 
-    return 'no'
+    current_user = User.query.filter_by(username=session['username']).first()
+    library = Library.query.filter_by(user_id=current_user.id).first()
+    if current_user and library:
+        bookmarks = Bookmark.query.filter_by(library_id=library.id)
+
+    return render_template('bookmark/library.html', form=form, bookmarks=bookmarks, error=error)
+
+
+@app.route('/library/<bookmarkId>/like', methods=['POST'])
+def increment_like(bookmarkId):
+    bookmark = Bookmark.query.filter_by(id=bookmarkId).first()
+    bookmark.likes += 1
+    db.session.commit()
+    return redirect(url_for('library'))
+
+@app.route('/library/<bookmarkId>/dislike', methods=['POST'])
+def increment_dislike(bookmarkId):
+    bookmark = Bookmark.query.filter_by(id=bookmarkId).first()
+    bookmark.dislikes += 1
+    db.session.commit()
+    return redirect(url_for('library'))

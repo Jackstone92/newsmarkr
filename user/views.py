@@ -88,7 +88,8 @@ def signup():
             # build a library object and pass in user id as foreign key
             library = Library(
                 form.name.data,
-                user.id
+                user.id,
+                0
             )
             # add library to database
             db.session.add(library)

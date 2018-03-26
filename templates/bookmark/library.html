@@ -3,9 +3,61 @@
 {% block title %}Library{% endblock %}
 
 {% block content %}
+  <div class="jumbotron">
+    <br/>
+    <h1 class="text-center">Welcome to NewsmarkR!</h1>
+    <br/>
+    <p class="text-center">Add the url of a news article below to bookmark it.</p>
+    <br/>
 
-  {% include "bookmark/partials/scrapeform.html" %}
+    {% from "_formhelpers.html" import render_field %}
 
-  {% include "bookmark/partials/bookmarklist.html" %}
+    <form class="form-inline col-md-12 justify-content-center" method="POST" action="{{ url_for('scrape') }}">
+      <div class="form-group">
+        {{ form.hidden_tag() }}
 
+        {{ render_field(form.url, class='form-control', id='formUrl', style='width:50em', placeholder='Enter a URL...') }}
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-success">Add Bookmark</button>
+      </div>
+    </form>
+    {% if error %}
+    <br/>
+    <p class="text-center">{{ error }}</p>
+    {% endif %}
+  </div>
+
+  <div class="row" style="margin-left:10px;margin-right:10px;">
+    {% for bookmark in bookmarks %}
+      <div class="col-sm-3" style="margin-bottom:20px;">
+        <div class="card">
+          <img class="card-img-top" src="{{ bookmark.image }}" alt="Card image cap">
+          <div class="card-body">
+            <h4 class="card-title">{{ bookmark.title }}</h4>
+            <p class="card-text">{{ bookmark.description }}</p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item text-center">Source: {{ bookmark.source }}</li>
+            <li class="list-group-item text-center">Added on: {{ bookmark.created_at }}</li>
+          </ul>
+          <ul class="list-group list-group-flush">
+            <a href="{{ bookmark.url }}" target="_blank" class="card-link list-group-item text-center">Go To Bookmark</a>
+          </ul>
+          <div class="card-body">
+            <form method="POST" action="{{ url_for('increment_like', bookmarkId=bookmark.id) }}" class="col-md-12">
+              <input type="hidden" value="test" name="like_bookmark_id" />
+              <span class="col-md-3">{{ bookmark.likes }}</span>
+              <button class="btn btn-primary col-md-9">Like</button>
+            </form>
+            <form method="POST" action="{{ url_for('increment_dislike', bookmarkId=bookmark.id) }}" class="col-md-12">
+              <input type="hidden" value="test" name="dislike_bookmark_id" />
+              <span class="col-md-3">{{ bookmark.dislikes }}</span>
+              <button class="btn btn-warning col-md-9">Dislike</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 {% endblock %}
