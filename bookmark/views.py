@@ -13,14 +13,13 @@ from user.decorators import login_required
 from slugify import slugify
 
 # import scrape helper function
-from bookmark.scrape import article_meta_scrape
+from utils.scrape import article_meta_scrape, bbc_article_content_scrape
 
 
 @app.route('/')
 @app.route('/index')
 def index():
     return render_template('index.html')
-
 
 @app.route('/library', methods=['GET', 'POST'])
 @login_required
@@ -89,6 +88,15 @@ def scrape():
 
     return render_template('bookmark/library.html', form=form, bookmarks=bookmarks, error=error)
 
+
+@app.route('/library/<bookmarkId>', methods=['GET','POST'])
+def show_bookmark(bookmarkId):
+
+    bookmark = Bookmark.query.filter_by(id=bookmarkId).first()
+
+    display = bbc_article_content_scrape(bookmark.url)
+
+    return render_template('bookmark/view.html', bookmark_title=bookmark.title, article=display)
 
 @app.route('/library/<bookmarkId>/like', methods=['POST'])
 def increment_like(bookmarkId):

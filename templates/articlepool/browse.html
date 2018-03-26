@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Headlines{% endblock %}
+
+{% block content %}
+  <div class="jumbotron">
+    <br/>
+    <h1 class="text-center">Browse Headlines</h1>
+  </div>
+
+  <div class="row browse__articles">
+    {% for article in articles %}
+      <div class="col-sm-3 browse__articles--card">
+        <div class="card">
+          <img class="card-img-top" src="{{ article.media_thumbnail[0]['url'] if article.media_thumbnail else 'err' }}" alt="Card image cap" />
+          <div class="card-body">
+            <h4 class="card-title">{{ article.title if article.title else 'err' }}</h4>
+            <!-- <p class="card-text">{{ article }}</p> -->
+            <p class="card-text">{{ article.summary if article.summary else 'err' }}</p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <!-- <li class="list-group-item text-center">Source: {{ article.source }}</li> -->
+            <li class="list-group-item text-center">Published: {{ article.published if article.published else 'err' }}</li>
+          </ul>
+          <ul class="list-group list-group-flush">
+            <a href="{{ article.link if article.link else '' }}" target="_blank" class="card-link list-group-item text-center">Go To Headline</a>
+          </ul>
+          <div class="card-body">
+
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

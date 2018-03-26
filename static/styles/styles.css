@@ -7,6 +7,16 @@ nav a {
   color: white !important;
 }
 
+#content {
+  overflow-x: hidden;
+}
+
+.boxshadow {
+  -webkit-box-shadow: 3px 4px 10px 1px rgba(0,0,0,0.5) !important;
+  -moz-box-shadow: 3px 4px 10px 1px rgba(0,0,0,0.5) !important;
+  box-shadow: 3px 4px 10px 1px rgba(0,0,0,0.5) !important;
+}
+
 
 /* ======== Login ======== */
 .login {
@@ -54,4 +64,163 @@ nav a {
   flex-direction: column;
   align-items:center;
   justify-content:center;
+}
+
+
+
+/* ======== Library ======== */
+.library__bookmarks {
+  margin-left:10px;
+  margin-right:10px;
+}
+
+.library__bookmarks--card {
+  margin-bottom:20px;
+}
+
+
+
+/* ======== Browse ======== */
+.browse__articles {
+  margin-left:10px;
+  margin-right:10px;
+}
+
+.browse__articles--card {
+  margin-bottom:20px;
+}
+
+
+
+/* ======== Social ======== */
+.social {
+  width: 100%;
+}
+
+.social__post {
+  padding: 20px 20px 30px 20px;
+  margin: 50px 0 0 0;
+}
+
+.social__post h1 {
+  font-size: 32px;
+  padding-bottom: 5px;
+}
+
+.social__post form {
+  
+}
+
+.social__post form textarea {
+  resize: none;
+  margin-top: 5px;
+}
+
+.social__timeline {
+  margin-top: 40px;
+}
+
+.social__timeline--sidebar {
+
+}
+
+.social__timeline--comments {
+
+}
+
+.social__timeline--postdate {
+  font-size: 12px;
+}
+
+.comment {
+  padding: 10px;
+}
+
+.comment__wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 5px;
+}
+
+.comment__wrapper--img {
+  height: 50px;
+  width: 50px;
+}
+
+.comment__wrapper--name {
+  padding-left: 10px;
+}
+
+.comment__wrapper--comment {
+
+}
+
+.comment__readmore {
+  text-align: center;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.comment__comment-entry {
+  width: 100%;
+  padding-bottom: 10px;
+}
+
+.comment__comment-entry form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.comment__comment-entry form textarea {
+  resize: none;
+}
+
+
+
+/* ======== Profile ======== */
+.profile {
+  width: 100%;
+}
+
+.profile__header {
+
+}
+
+.profile__header--cover {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-end;
+  /* background-color: black; */
+  background-image: url('https://dreamlandia.com/images/N/newspaper.jpg');
+  background-size: cover;
+  background-position: center center;
+  height: 400px;
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+.profile__header--imgwrapper {
+
+}
+
+.profile__header--imgwrapper img {
+  height: 200px;
+  width: 200px;
+}
+
+.profile__header--name {
+  color: white;
+}
+
+.profile__nav {
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
 }

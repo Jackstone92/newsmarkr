@@ -29,6 +29,7 @@ class Bookmark(db.Model):
     text = db.Column(db.Text())
     image = db.Column(db.Text(256))
     tags = db.Column(db.String(256))
+    published_on = db.Column(db.String(256))
     likes = db.Column(db.Integer)
     dislikes = db.Column(db.Integer)
     source = db.Column(db.String(256))
@@ -39,7 +40,7 @@ class Bookmark(db.Model):
     # category relationship
     category = db.relationship('Category', backref=db.backref('bookmark', lazy='dynamic'))
 
-    def __init__(self, library, user, category, slug, url, title, source, description=None, image=None, text=None, tags=None):
+    def __init__(self, library, user, category, slug, url, title, source, published_on, description=None, image=None, text=None, tags=None):
         self.library_id = library.id
         self.user_id = user.id
         self.url = url
@@ -47,6 +48,7 @@ class Bookmark(db.Model):
         self.description = description
         self.image = image
         self.tags = tags
+        self.published_on = published_on
         self.likes = 0
         self.dislikes = 0
         self.source = source

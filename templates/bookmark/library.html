@@ -7,7 +7,7 @@
     <br/>
     <h1 class="text-center">Welcome to NewsmarkR!</h1>
     <br/>
-    <p class="text-center">Add the url of a news article below to bookmark it.</p>
+    <p class="text-center">Add the url of a news article below to bookmark it or <a href="{{ url_for('browse') }}">browse top headlines</a> and add them from there.</p>
     <br/>
 
     {% from "_formhelpers.html" import render_field %}
@@ -28,11 +28,11 @@
     {% endif %}
   </div>
 
-  <div class="row" style="margin-left:10px;margin-right:10px;">
+  <div class="row library__bookmarks">
     {% for bookmark in bookmarks %}
-      <div class="col-sm-3" style="margin-bottom:20px;">
+      <div class="col-sm-3 library__bookmarks--card">
         <div class="card">
-          <img class="card-img-top" src="{{ bookmark.image }}" alt="Card image cap">
+          <img class="card-img-top" src="{{ bookmark.image }}" alt="Card image cap" />
           <div class="card-body">
             <h4 class="card-title">{{ bookmark.title }}</h4>
             <p class="card-text">{{ bookmark.description }}</p>
@@ -42,7 +42,7 @@
             <li class="list-group-item text-center">Added on: {{ bookmark.created_at }}</li>
           </ul>
           <ul class="list-group list-group-flush">
-            <a href="{{ bookmark.url }}" target="_blank" class="card-link list-group-item text-center">Go To Bookmark</a>
+            <a href="{{ url_for('show_bookmark', bookmarkId=bookmark.id) }}" class="card-link list-group-item text-center">Go To Bookmark</a>
           </ul>
           <div class="card-body">
             <form method="POST" action="{{ url_for('increment_like', bookmarkId=bookmark.id) }}" class="col-md-12">

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Social{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="container social">
+
+        <div class="row social__post boxshadow">
+          <div class="col-md-12">
+            <form>
+              <div class="form-row">
+                <div class="offset-md-2"></div>
+                <div class="form-group col-md-8">
+                  <h1>What's your view on...?</h1>
+                  <input type="url" class="form-control" name="Article to post about" placeholder="Enter article url..." />
+                </div>
+                <div class="offset-md-2"></div>
+              </div>
+              <div class="form-row">
+                <div class="offset-md-2"></div>
+                <div class="form-group col-md-8">
+                  <textarea class="form-control" rows="3" columns="3" placeholder="What's on your mind?"></textarea>
+                </div>
+                <div class="offset-md-2"></div>
+              </div>
+              <div class="form-row">
+                <div class="offset-md-6"></div>
+                <div class="form-group col-md-4">
+                  <button class="btn btn-primary btn-block" type="submit">Post</button>
+                </div>
+                <div class="offset-md-2"></div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="row social__timeline">
+          <div class="col-md-7 social__timeline--article">
+
+            <div class="card">
+              <img class="card-img-top" src="https://pbs.twimg.com/media/C7i2vHbXkAACJg4.jpg" alt="Card image cap" />
+              <div class="card-body">
+                <h4 class="card-title">Article</h4>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col-md-5 social__timeline--comments">
+
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">Posted by Jason Bartok <span class="social__timeline--postdate"> on Mon 26th March 2018</span></h4>
+                <div class="comment">
+                  <div class="comment__wrapper">
+                    <img class="img-thumbnail comment__wrapper--img" src="https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png" alt="profile picture" />
+                    <p class="comment__wrapper--name">Alex Jones</p>
+                  </div>
+                  <div class="comment__wrapper--comment">
+                    <p>I really think that this is fake news. Why would anyone read this at all?</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="comment__readmore">
+                <a href="#">Read more</a>
+              </div>
+
+              <div class="comment__comment-entry">
+                <hr/>
+                <form class="form-inline">
+                  <img class="img-thumbnail comment__wrapper--img" src="https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png" />
+                  <textarea class="form-control" rows="2" columns="3" placeholder="Write a comment..."></textarea>
+                  <button class="btn btn-primary" type="submit">Post</button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+{% endblock %}
