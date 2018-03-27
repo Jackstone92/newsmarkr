@@ -81,6 +81,10 @@ nav a {
   color: white;
 }
 
+.library__filter {
+  padding-top: 10px;
+}
+
 .library__bookmarks {
   margin-left:10px;
   margin-right:10px;
@@ -88,6 +92,9 @@ nav a {
 
 .library__bookmarks--card {
   margin-bottom:20px;
+}
+.library__bookmarks--card:hover {
+  cursor: pointer;
 }
 
 .library__bookmarks--header {

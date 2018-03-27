@@ -1,6 +1,10 @@
 from flask_newsmarkr import app
 from flask import render_template, redirect, flash, url_for, session, abort, request
 
+# for uploaded file deletion
+import os
+from settings import UPLOADED_IMAGES_DEST
+
 from datetime import datetime
 
 from bookmark.form import SearchForm, ScrapeForm, EditForm
@@ -53,6 +57,7 @@ def add_collection():
         current_user.id,
         0,
         'https://dummyimage.com/600x400/000/fff',
+        '',
         'Add a collection category'
     )
     # add to database
@@ -121,10 +126,12 @@ def edit_collection(collectionId):
             if collection.name != name:
                 collection.name = name
 
+            # if image, use that rather than filename
             if image and collection.image != image:
                 collection.image_upload = ''
                 collection.image = image
 
+            # if filename, use that rather than image
             if filename and collection.image_upload != filename:
                 collection.image = ''
                 collection.image_upload = filename
@@ -135,6 +142,29 @@ def edit_collection(collectionId):
             db.session.commit()
 
     return redirect(url_for('collection', collectionId=collectionId))
+
+@app.route('/library/<collectionId>/delete-collection', methods=['GET', 'POST'])
+def delete_collection(collectionId):
+    """ Collection method to delete a collection """
+    collection_to_delete = Collection.query.filter_by(id=collectionId).first()
+    # delete all bookmarks within collection
+    bookmarks_to_delete = Bookmark.query.filter_by(collection_id=collection_to_delete.id)
+
+    # delete collection image_upload images
+    if collection_to_delete.image_upload:
+        os.remove(os.path.join(UPLOADED_IMAGES_DEST, collection_to_delete.image_upload))
+
+    for bookmark in bookmarks_to_delete:
+        db.session.delete(bookmark)
+
+    db.session.flush()
+    # delete collection
+    db.session.delete(collection_to_delete)
+    # commit changes
+    db.session.commit()
+    # redirect back to library page
+    return redirect(url_for('library'))
+
 
 @app.route('/library/<collectionId>/scrape', methods=['POST'])
 def scrape(collectionId):
