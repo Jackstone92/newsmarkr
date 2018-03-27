@@ -3,33 +3,39 @@
 {% block title %}Library{% endblock %}
 
 {% block content %}
-  <div class="jumbotron">
-    <br/>
-    <h1 class="text-center">Welcome to NewsmarkR!</h1>
-    <br/>
-    <p class="text-center">Select or create a collection to add bookmarks.</p>
-    <br/>
+  <div class="jumbotron library__header" style="background-image: url('{{ url_for('static', filename='images/global.jpg') }}')">
+    <div class="library__header--content">
+      <br/><br/><br/><br/>
+      <h1 class="text-center">Your NewsmarkR, Your World</h1>
+      <br/>
+      <p class="text-center">Select or create a collection to add bookmarks.</p>
+      <br/>
 
-    <div class="form-inline col-md-12 justify-content-center">
-      <div class="input-group col-sm-12 col-md-8 justify-content-center">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-search"></i></span>
+      <div class="form-inline col-md-12 justify-content-center">
+        <div class="input-group col-sm-12 col-md-8 justify-content-center">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-search"></i></span>
+          </div>
+          <input class='form-control' placeholder='Search for a collection or bookmark...' />
         </div>
-        <input class='form-control' placeholder='Search for a collection or bookmark...' />
       </div>
+      {% if error %}
+      <br/>
+      <p class="text-center">{{ error }}</p>
+      {% endif %}
     </div>
-    {% if error %}
-    <br/>
-    <p class="text-center">{{ error }}</p>
-    {% endif %}
   </div>
 
   <div class="row library__bookmarks">
     {% if collections != None %}
       {% for collection in collections %}
       <div class="col-sm-3 library__bookmarks--card" onclick="window.location.href='/library/{{collection.id}}'">
-        <div class="card text-center">
-          <img class="card-img-top" src="{{ collection.image }}" alt="Card image cap" />
+        <div class="card boxshadow text-center">
+          {% if collection.image_upload %}
+            <img class="card-img-top" src="{{ url_for('static', filename='uploads/images/' + collection.image_upload) }}" alt="Card image cap" />
+          {% else %}
+            <img class="card-img-top" src="{{ collection.image }}" alt="Card image cap" />
+          {% endif %}
           <div class="card-body">
             <h4 class="card-title">{{ collection.name }}</h4>
             <p class="card-text">{{ collection.category }}</p>
@@ -44,11 +50,8 @@
 
     <!-- onclick navigate to /library/add to insert new collection -->
     <div class="col-sm-3 library__bookmarks--card" onclick="window.location.href='/library/add'">
-      <div class="card">
+      <div class="card boxshadow">
         <img class="card-img-top" src="{{ url_for('static', filename='images/add.png') }}" alt="Card image cap" />
-        <div class="card-body">
-          <h4 class="card-title text-center">Add Collection</h4>
-        </div>
       </div>
     </div>
   </div>

@@ -6,17 +6,19 @@ class Collection(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     name = db.Column(db.String(80))
     image = db.Column(db.Text(256))
+    image_upload = db.Column(db.Text(256))
     category = db.Column(db.String(80))
     num_bookmarks = db.Column(db.Integer)
 
     # bookmark relationship
     bookmarks = db.relationship('Bookmark', backref='collection', lazy='dynamic')
 
-    def __init__(self, name, user_id, num_bookmarks, image, category):
+    def __init__(self, name, user_id, num_bookmarks, image, image_upload, category):
         self.name = name
         self.user_id = user_id
         self.num_bookmarks = num_bookmarks
         self.image = image
+        self.image_upload = image_upload
         self.category = category
 
     def __repr__(self):

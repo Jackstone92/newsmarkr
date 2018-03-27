@@ -3,15 +3,19 @@
 {% block title %}Library{% endblock %}
 
 {% block content %}
-  <div class="jumbotron library__bookmarks--header" style="background-image: url('{{ collection.image }}')">
-    <br/>
+  {% if collection.image_upload %}
+    <div class="jumbotron library__bookmarks--header" style="background-image: url('{{ url_for('static', filename='uploads/images/' + collection.image_upload) }}')">
+  {% else %}
+    <div class="jumbotron library__bookmarks--header" style="background-image: url('{{ collection.image }}')">
+  {% endif %}
+    <br/><br/>
     <div class="library__bookmarks--header-content">
       <div class="row">
         <div class="col-md-6">
           <button class="btn btn-secondary" onclick="window.location.href='/library'"><span><i class="fa fa-chevron-left"></i></span> Back</button>
         </div>
         <div class="col-md-6">
-          <button class="btn btn-warning" data-toggle="modal" data-target="#editModal" style="float: right;">Edit</button>
+          <button class="btn btn-warning" data-toggle="modal" data-target="#editModal" style="float: right;">Edit Collection</button>
         </div>
       </div>
       <h1 class="text-center">{{ collection.name }}</h1>
@@ -76,7 +80,7 @@
   {% endif %}
 
   <!-- edit modal -->
-  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="edit modal" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -86,13 +90,14 @@
           </button>
         </div>
         {% from "_formhelpers.html" import render_field %}
-        <form action="{{ url_for('edit_collection', collectionId=collection.id) }}" method="POST">
+        <form action="{{ url_for('edit_collection', collectionId=collection.id) }}" method="POST" enctype="multipart/form-data" role="form">
           <div class="modal-body">
             {{ form.hidden_tag() }}
 
-            {{ render_field(edit_form.name, class='form-control', required=True) }}
-            {{ render_field(edit_form.image, class='form-control', required=True) }}
-            {{ render_field(edit_form.category, class='form-control', required=True) }}
+            {{ render_field(edit_form.name, class='form-control', required=True, value=collection.name) }}
+            {{ render_field(edit_form.image, class='form-control', required=False, value=collection.image) }}
+            {{ render_field(edit_form.image_upload, class='form-control', required=False, value=collection.image_upload) }}
+            {{ render_field(edit_form.category, class='form-control', required=True, value=collection.category) }}
           </div>
           <div class="modal-footer">
             <button class="btn btn-success" type="submit">Update</button>

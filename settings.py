@@ -15,3 +15,9 @@ DB_URI = 'mysql+pymysql://%s:%s@%s/%s' % (DB_USERNAME, DB_PASSWORD, DB_HOST, APP
 # required variable for sqlalchemy
 SQLALCHEMY_DATABASE_URI = DB_URI
 SQLALCHEMY_TRACK_MODIFICATIONS = True
+
+# for flask-uploads
+# where images are saved on server (print pwd to get directory!)
+UPLOADED_IMAGES_DEST = '/Users/jacksimac/Developer/Projects/flask-newsmarkr/flask_newsmarkr/static/uploads/images'
+# how you serve images - prepend to images served
+UPLOADED_IMAGES_URL = '/static/uploads/images/'

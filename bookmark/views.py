@@ -4,7 +4,7 @@ from flask import render_template, redirect, flash, url_for, session, abort, req
 from datetime import datetime
 
 from bookmark.form import SearchForm, ScrapeForm, EditForm
-from flask_newsmarkr import db
+from flask_newsmarkr import db, uploaded_images
 from user.models import User
 from bookmark.models import Collection, Bookmark, Category
 
@@ -98,25 +98,43 @@ def edit_collection(collectionId):
     edit_form = EditForm()
     name = None
     image = None
+    image_upload = None
     category = None
+
+    image = None
+    filename = None
 
     if edit_form.validate_on_submit():
         name = edit_form.name.data
         image = edit_form.image.data
+        # handle image upload
+        image_upload = edit_form.image_upload.data
+        try:
+            filename = uploaded_images.save(image_upload)
+        except:
+            flash('The image was not uploaded')
+
         category = edit_form.category.data
 
-    if name and image and category:
-        collection = Collection.query.filter_by(id=collectionId).first()
-        if collection.name != name:
-            collection.name = name
-        if collection.image != image:
-            collection.image = image
-        if collection.category != category:
-            collection.category = category
-        db.session.commit()
+        if name and image or image_upload and category:
+            collection = Collection.query.filter_by(id=collectionId).first()
+            if collection.name != name:
+                collection.name = name
+
+            if image and collection.image != image:
+                collection.image_upload = ''
+                collection.image = image
+
+            if filename and collection.image_upload != filename:
+                collection.image = ''
+                collection.image_upload = filename
+
+            if collection.category != category:
+                collection.category = category
+
+            db.session.commit()
 
     return redirect(url_for('collection', collectionId=collectionId))
-
 
 @app.route('/library/<collectionId>/scrape', methods=['POST'])
 def scrape(collectionId):

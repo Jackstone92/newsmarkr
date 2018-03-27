@@ -4,6 +4,11 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 # add flask-migrate
 from flask_migrate import Migrate
+# import flask-markdown
+from flaskext.markdown import Markdown
+# import flask-uploads
+from flask_uploads import UploadSet, configure_uploads, IMAGES
+
 
 app = Flask(__name__)
 # set configuration from settings file
@@ -15,6 +20,13 @@ db = SQLAlchemy(app)
 # pass app and db
 migrate = Migrate(app, db)
 
+
+# Markdown
+Markdown(app)
+
+# flask_uploads
+uploaded_images = UploadSet('images', IMAGES)
+configure_uploads(app, uploaded_images)
 
 # import all views (controllers)
 from user import views

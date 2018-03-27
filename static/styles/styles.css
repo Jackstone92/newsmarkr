@@ -69,6 +69,18 @@ nav a {
 
 
 /* ======== Library ======== */
+.library__header {
+  height: 600px;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.library__header--content {
+  color: white;
+}
+
 .library__bookmarks {
   margin-left:10px;
   margin-right:10px;
@@ -79,7 +91,7 @@ nav a {
 }
 
 .library__bookmarks--header {
-  height: 500px;
+  height: 600px;
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
