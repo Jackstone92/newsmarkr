@@ -7,10 +7,6 @@ from wtforms.fields.html5 import EmailField
 # pass in Form (from flask_wtf)
 # signup form class
 class SignupForm(FlaskForm):
-    name = StringField('Library name', [
-        validators.Required(),
-        validators.Length(max=80)
-    ])
     fullname = StringField('Full Name', [validators.Required()])
     email = EmailField('Email', [validators.Required()])
     username = StringField('Username', [

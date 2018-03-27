@@ -3,7 +3,13 @@ from flask import render_template, redirect, flash, url_for, session, abort, req
 
 from flask_newsmarkr import db
 
+from social.form import PostForm
 
-@app.route('/social', methods=['GET', 'POST'])
+
+@app.route('/social-feed', methods=['GET', 'POST'])
 def social():
-    return render_template('social/social.html')
+    form = PostForm()
+
+    # if form.validate_on_submit()
+
+    return render_template('social/social.html', form=form)

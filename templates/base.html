@@ -6,14 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
 
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}" />
   </head>
   <body>
     <!-- navbar -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-light">
       {% if session.get('username') %}
-      <a class="navbar-brand" href="{{ url_for('library') }}">NewsmarkR</a>
+      <a class="navbar-brand" href="{{ url_for('social') }}">NewsmarkR</a>
       {% else %}
       <a class="navbar-brand" href="{{ url_for('index') }}">NewsmarkR</a>
       {% endif %}
@@ -25,13 +26,13 @@
         {% if session.get('username') %}
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('social') }}">Social Feed</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{{ url_for('library') }}">Library</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('browse') }}">Browse Headlines</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('social') }}">Social</a>
           </li>
         </ul>
         <ul class="navbar-nav">

@@ -1,19 +1,23 @@
 from flask_newsmarkr import db
 from datetime import datetime
 
-class Library(db.Model):
+class Collection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    name = db.Column(db.String(80))
+    image = db.Column(db.Text(256))
+    category = db.Column(db.String(80))
     num_bookmarks = db.Column(db.Integer)
 
     # bookmark relationship
-    bookmarks = db.relationship('Bookmark', backref='library', lazy='dynamic')
+    bookmarks = db.relationship('Bookmark', backref='collection', lazy='dynamic')
 
-    def __init__(self, name, user_id, num_bookmarks):
+    def __init__(self, name, user_id, num_bookmarks, image, category):
         self.name = name
         self.user_id = user_id
         self.num_bookmarks = num_bookmarks
+        self.image = image
+        self.category = category
 
     def __repr__(self):
         return '<Library %r>' % self.name
@@ -21,7 +25,7 @@ class Library(db.Model):
 
 class Bookmark(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    library_id = db.Column(db.Integer, db.ForeignKey('library.id'))
+    collection_id = db.Column(db.Integer, db.ForeignKey('collection.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     url = db.Column(db.String(256))
     title = db.Column(db.String(256))
@@ -40,8 +44,8 @@ class Bookmark(db.Model):
     # category relationship
     category = db.relationship('Category', backref=db.backref('bookmark', lazy='dynamic'))
 
-    def __init__(self, library, user, category, slug, url, title, source, published_on, description=None, image=None, text=None, tags=None):
-        self.library_id = library.id
+    def __init__(self, collection, user, category, slug, url, title, source, published_on, description=None, image=None, text=None, tags=None):
+        self.collection_id = collection.id
         self.user_id = user.id
         self.url = url
         self.title = title

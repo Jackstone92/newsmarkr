@@ -7,21 +7,17 @@
     <br/>
     <h1 class="text-center">Welcome to NewsmarkR!</h1>
     <br/>
-    <p class="text-center">Add the url of a news article below to bookmark it or <a href="{{ url_for('browse') }}">browse top headlines</a> and add them from there.</p>
+    <p class="text-center">Select or create a collection to add bookmarks.</p>
     <br/>
 
-    {% from "_formhelpers.html" import render_field %}
-
-    <form class="form-inline col-md-12 justify-content-center" method="POST" action="{{ url_for('scrape') }}">
-      <div class="form-group">
-        {{ form.hidden_tag() }}
-
-        {{ render_field(form.url, class='form-control', id='formUrl', style='width:50em', placeholder='Enter a URL...') }}
+    <div class="form-inline col-md-12 justify-content-center">
+      <div class="input-group col-sm-12 col-md-8 justify-content-center">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><i class="fa fa-search"></i></span>
+        </div>
+        <input class='form-control' placeholder='Search for a collection or bookmark...' />
       </div>
-      <div class="form-group">
-        <button type="submit" class="btn btn-success">Add Bookmark</button>
-      </div>
-    </form>
+    </div>
     {% if error %}
     <br/>
     <p class="text-center">{{ error }}</p>
@@ -29,35 +25,31 @@
   </div>
 
   <div class="row library__bookmarks">
-    {% for bookmark in bookmarks %}
-      <div class="col-sm-3 library__bookmarks--card">
-        <div class="card">
-          <img class="card-img-top" src="{{ bookmark.image }}" alt="Card image cap" />
+    {% if collections != None %}
+      {% for collection in collections %}
+      <div class="col-sm-3 library__bookmarks--card" onclick="window.location.href='/library/{{collection.id}}'">
+        <div class="card text-center">
+          <img class="card-img-top" src="{{ collection.image }}" alt="Card image cap" />
           <div class="card-body">
-            <h4 class="card-title">{{ bookmark.title }}</h4>
-            <p class="card-text">{{ bookmark.description }}</p>
+            <h4 class="card-title">{{ collection.name }}</h4>
+            <p class="card-text">{{ collection.category }}</p>
           </div>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item text-center">Source: {{ bookmark.source }}</li>
-            <li class="list-group-item text-center">Added on: {{ bookmark.created_at }}</li>
+            <li class="list-group-item text-center">Bookmarks: {{ collection.num_bookmarks }}</li>
           </ul>
-          <ul class="list-group list-group-flush">
-            <a href="{{ url_for('show_bookmark', bookmarkId=bookmark.id) }}" class="card-link list-group-item text-center">Go To Bookmark</a>
-          </ul>
-          <div class="card-body">
-            <form method="POST" action="{{ url_for('increment_like', bookmarkId=bookmark.id) }}" class="col-md-12">
-              <input type="hidden" value="test" name="like_bookmark_id" />
-              <span class="col-md-3">{{ bookmark.likes }}</span>
-              <button class="btn btn-primary col-md-9">Like</button>
-            </form>
-            <form method="POST" action="{{ url_for('increment_dislike', bookmarkId=bookmark.id) }}" class="col-md-12">
-              <input type="hidden" value="test" name="dislike_bookmark_id" />
-              <span class="col-md-3">{{ bookmark.dislikes }}</span>
-              <button class="btn btn-warning col-md-9">Dislike</button>
-            </form>
-          </div>
         </div>
       </div>
-    {% endfor %}
+      {% endfor %}
+    {% endif %}
+
+    <!-- onclick navigate to /library/add to insert new collection -->
+    <div class="col-sm-3 library__bookmarks--card" onclick="window.location.href='/library/add'">
+      <div class="card">
+        <img class="card-img-top" src="{{ url_for('static', filename='images/add.png') }}" alt="Card image cap" />
+        <div class="card-body">
+          <h4 class="card-title text-center">Add Collection</h4>
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}

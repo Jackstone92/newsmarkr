@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Social{% endblock %}
+{% block title %}Social Feed{% endblock %}
 
 {% block content %}
   <div class="row">
@@ -9,19 +9,15 @@
 
         <div class="row social__post boxshadow">
           <div class="col-md-12">
+            {% from "_formhelpers.html" import render_field %}
             <form>
+              {{ form.hidden_tag() }}
               <div class="form-row">
                 <div class="offset-md-2"></div>
                 <div class="form-group col-md-8">
                   <h1>What's your view on...?</h1>
-                  <input type="url" class="form-control" name="Article to post about" placeholder="Enter article url..." />
-                </div>
-                <div class="offset-md-2"></div>
-              </div>
-              <div class="form-row">
-                <div class="offset-md-2"></div>
-                <div class="form-group col-md-8">
-                  <textarea class="form-control" rows="3" columns="3" placeholder="What's on your mind?"></textarea>
+                  {{ render_field(form.url, class='form-control', type='url', placeholder='Enter article url...') }}
+                  {{ render_field(form.post, class='form-control', rows='3', columns='3', placeholder="What's on your mind?") }}
                 </div>
                 <div class="offset-md-2"></div>
               </div>

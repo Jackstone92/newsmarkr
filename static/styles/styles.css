@@ -78,7 +78,17 @@ nav a {
   margin-bottom:20px;
 }
 
+.library__bookmarks--header {
+  height: 500px;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
 
+.library__bookmarks--header-content {
+  color: white;
+}
 
 /* ======== Browse ======== */
 .browse__articles {
@@ -108,7 +118,7 @@ nav a {
 }
 
 .social__post form {
-  
+
 }
 
 .social__post form textarea {
@@ -120,7 +130,7 @@ nav a {
   margin-top: 40px;
 }
 
-.social__timeline--sidebar {
+.social__timeline--article {
 
 }
 

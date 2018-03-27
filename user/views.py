@@ -7,7 +7,6 @@ from flask_newsmarkr import db
 from user.form import SignupForm, LoginForm
 # user.models to check in database
 from user.models import User
-from bookmark.models import Library
 
 # import bcrypt to unhash password
 import bcrypt
@@ -49,7 +48,7 @@ def login():
                     return redirect(next)
                 else:
                     # go straight to index
-                    return redirect(url_for('library'))
+                    return redirect(url_for('social'))
             else:
                 error = "Incorrect username and password"
         else:
@@ -78,39 +77,20 @@ def signup():
             hashed_password,
             True
         )
-
         # add to database
         db.session.add(user)
         # flush - sqlalchemy simulates that record is written, and provide id etc. However, doesn't hit database yet - can always throw back
         db.session.flush()
         # if we have user id - validation
         if user.id:
-            # build a library object and pass in user id as foreign key
-            library = Library(
-                form.name.data,
-                user.id,
-                0
-            )
-            # add library to database
-            db.session.add(library)
-            db.session.flush()
+            # actually commit transaction to database
+            db.session.commit()
+            # redirect to user login
+            return redirect(url_for('login'))
         else:
             # undo flush by rollback()
             db.session.rollback()
             error = "Error creating user"
-
-        # check both before committing to db
-        if user.id and library.id:
-            # actually commit transaction to database
-            db.session.commit()
-            # if success, flash
-            flash("Newsmarkr Library Created!")
-            # redirect to user library
-            return redirect(url_for('login'))
-        else:
-            # rollback
-            db.session.rollback()
-            error = "Error creating Newsmarkr library"
             flash(error)
 
     # render template and pass in form

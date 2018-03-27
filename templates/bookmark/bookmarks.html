@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Library{% endblock %}
+
+{% block content %}
+  <div class="jumbotron library__bookmarks--header" style="background-image: url('{{ collection.image }}')">
+    <br/>
+    <div class="library__bookmarks--header-content">
+      <div class="row">
+        <div class="col-md-6">
+          <button class="btn btn-secondary" onclick="window.location.href='/library'"><span><i class="fa fa-chevron-left"></i></span> Back</button>
+        </div>
+        <div class="col-md-6">
+          <button class="btn btn-warning" data-toggle="modal" data-target="#editModal" style="float: right;">Edit</button>
+        </div>
+      </div>
+      <h1 class="text-center">{{ collection.name }}</h1>
+      <br/>
+      <p class="text-center">Add the url of a news article below to bookmark it or <a href="{{ url_for('browse') }}">browse top headlines</a> and add them from there.</p>
+      <br/>
+
+      {% from "_formhelpers.html" import render_field %}
+
+      <form class="form-inline col-md-12 justify-content-center" method="POST" action="{{ url_for('scrape', collectionId=collection.id) }}">
+        <div class="form-group">
+          {{ form.hidden_tag() }}
+
+          {{ render_field(form.url, class='form-control', id='formUrl', style='width:50em', placeholder='Enter a URL...') }}
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-success">Add Bookmark</button>
+        </div>
+      </form>
+      {% if error %}
+      <br/>
+      <p class="text-center">{{ error }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if bookmarks != None %}
+    <div class="row library__bookmarks">
+
+      {% for bookmark in bookmarks %}
+        <div class="col-sm-3 library__bookmarks--card" onclick="window.location.href='/library/{{ collection.id }}/{{ bookmark.id }}'">
+          <div class="card">
+            <img class="card-img-top" src="{{ bookmark.image }}" alt="Card image cap" />
+            <div class="card-body">
+              <h4 class="card-title">{{ bookmark.title }}</h4>
+              <p class="card-text">{{ bookmark.description }}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item text-center">Source: {{ bookmark.source }}</li>
+              <li class="list-group-item text-center">Added on: {{ bookmark.created_at }}</li>
+            </ul>
+            <ul class="list-group list-group-flush">
+              <a href="{{ url_for('show_bookmark', collectionId=collection.id, bookmarkId=bookmark.id) }}" class="card-link list-group-item text-center">Go To Bookmark</a>
+            </ul>
+            <div class="card-body">
+              <form method="POST" action="{{ url_for('increment_like', collectionId=collection.id, bookmarkId=bookmark.id) }}" class="col-md-12">
+                <input type="hidden" value="test" name="like_bookmark_id" />
+                <span class="col-md-3">{{ bookmark.likes }}</span>
+                <button class="btn btn-primary col-md-9">Like</button>
+              </form>
+              <form method="POST" action="{{ url_for('increment_dislike', collectionId=collection.id, bookmarkId=bookmark.id) }}" class="col-md-12">
+                <input type="hidden" value="test" name="dislike_bookmark_id" />
+                <span class="col-md-3">{{ bookmark.dislikes }}</span>
+                <button class="btn btn-warning col-md-9">Dislike</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+    </div>
+  {% endif %}
+
+  <!-- edit modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit Collection</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% from "_formhelpers.html" import render_field %}
+        <form action="{{ url_for('edit_collection', collectionId=collection.id) }}" method="POST">
+          <div class="modal-body">
+            {{ form.hidden_tag() }}
+
+            {{ render_field(edit_form.name, class='form-control', required=True) }}
+            {{ render_field(edit_form.image, class='form-control', required=True) }}
+            {{ render_field(edit_form.category, class='form-control', required=True) }}
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success" type="submit">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
