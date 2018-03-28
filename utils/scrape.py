@@ -37,11 +37,13 @@ def bbc_article_content_scrape(url):
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
 
-    article = soup.find(class_='story-body__inner').prettify()
+    article = soup.find(class_='story-body__inner')
 
+    if article:
+        return soup.prettify()
+
+    return soup.get_text()
     # TODO:
     # get images and format
     # get header tags and format
     # get content and format
-
-    return article

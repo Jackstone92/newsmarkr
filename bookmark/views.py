@@ -21,7 +21,11 @@ from slugify import slugify
 # import scrape helper function
 from utils.scrape import article_meta_scrape, bbc_article_content_scrape
 
-
+# ============================================================== #
+#                                                                #
+#                            Index                               #
+#                                                                #
+# ============================================================== #
 @app.route('/')
 @app.route('/index')
 def index():
@@ -29,6 +33,11 @@ def index():
     return render_template('index.html')
 
 
+# ============================================================== #
+#                                                                #
+#                           Library                              #
+#                                                                #
+# ============================================================== #
 @app.route('/library', methods=['GET', 'POST'])
 @login_required
 def library():
@@ -53,12 +62,12 @@ def add_collection():
     current_user = User.query.filter_by(username=session['username']).first()
     # create new collection
     collection = Collection(
-        'Add a collection name',
+        'New Collection',
         current_user.id,
         0,
-        'https://dummyimage.com/600x400/000/fff',
+        'https://dummyimage.com/1920x1280/000/fff&text=Insert+Image',
         '',
-        'Add a collection category'
+        'New Category'
     )
     # add to database
     db.session.add(collection)
@@ -76,26 +85,49 @@ def add_collection():
         return error
 
 
+
+# ============================================================== #
+#                                                                #
+#                          Collection                            #
+#                                                                #
+# ============================================================== #
 @app.route('/library/<collectionId>', methods=['GET', 'POST'])
 def collection(collectionId):
     """ Collection page. Lists bookmarks in current collection """
     form = ScrapeForm()
     edit_form = EditForm()
     bookmarks = None
-    error = None
+    edit_bookmark_status = None
+    if request.args.get('error'):
+        error = request.args.get('error')
+    else:
+        error = None
 
-    collectionId = collectionId
+    # session for edit bookmarks status
+    if 'edit_bookmark_status' in session:
+        edit_bookmark_status = session['edit_bookmark_status']
+    else:
+        session['edit_bookmark_status'] = False
 
     # get all bookmarks in library
     current_user = User.query.filter_by(username=session['username']).first()
     collection = Collection.query.filter_by(id=collectionId).first()
     if current_user and collection:
-        bookmarks = Bookmark.query.filter_by(collection_id=collectionId)
+        bookmarks = Bookmark.query.filter_by(collection_id=collectionId).order_by('id desc')
     else:
         error = 'No collections currently found in your library...'
 
-    return render_template('bookmark/bookmarks.html', form=form, edit_form=edit_form, bookmarks=bookmarks, error=error, collection=collection)
+    return render_template('bookmark/bookmarks.html', form=form, edit_form=edit_form, bookmarks=bookmarks, error=error, collection=collection, edit_bookmark_status=edit_bookmark_status)
 
+@app.route('/library/<collectionId>/change-edit-status', methods=['POST'])
+def change_edit_status(collectionId):
+    if 'edit_bookmark_status' in session:
+        edit_bookmark_status = session['edit_bookmark_status']
+        session['edit_bookmark_status'] = not edit_bookmark_status
+    else:
+        session['edit_bookmark_status'] = False
+
+    return redirect(url_for('collection', collectionId=collectionId))
 
 @app.route('/library/<collectionId>/edit-collection', methods=['POST'])
 def edit_collection(collectionId):
@@ -165,12 +197,26 @@ def delete_collection(collectionId):
     # redirect back to library page
     return redirect(url_for('library'))
 
+@app.route('/library/<collectionId>/delete-bookmark', methods=['POST'])
+def delete_bookmark(collectionId):
+    # get bookmarkId from request
+    bookmarkId = request.args.get('bookmarkId')
+    # bookmark that should be deleted
+    bookmark_to_delete = Bookmark.query.filter_by(id=bookmarkId).first()
+    # delete bookmark
+    db.session.delete(bookmark_to_delete)
+    db.session.commit()
+
+    return redirect(url_for('collection', collectionId=collectionId))
 
 @app.route('/library/<collectionId>/scrape', methods=['POST'])
 def scrape(collectionId):
     """ Bookmark scrape method """
     form = ScrapeForm()
-    error = None
+    if request.args.get('error'):
+        error = request.args.get('error')
+    else:
+        error = None
     current_user = User.query.filter_by(username=session['username']).first()
     url_to_scrape = None
     bookmark = None
@@ -192,6 +238,10 @@ def scrape(collectionId):
         # get library
         collection = Collection.query.filter_by(id=collectionId).first()
 
+        # increment num_bookmarks for that collection
+        collection.num_bookmarks += 1
+        db.session.flush()
+
         if collection:
             # add bookmark to db
             title = meta['title']
@@ -212,22 +262,30 @@ def scrape(collectionId):
     else:
         error = 'Please try a different URL...'
 
-    current_user = User.query.filter_by(username=session['username']).first()
-    if current_user:
-        bookmarks = Bookmark.query.filter_by(collection_id=collectionId)
-
-    return render_template('bookmark/library.html', form=form, bookmarks=bookmarks, error=error)
+    return redirect(url_for('collection', collectionId=collectionId, error=error))
 
 
+
+# ============================================================== #
+#                                                                #
+#                           Bookmark                             #
+#                                                                #
+# ============================================================== #
 @app.route('/library/<collectionId>/<bookmarkId>', methods=['GET','POST'])
 def show_bookmark(collectionId, bookmarkId):
     """ Bookmark display page. Displays bookmark from within a collection """
     bookmark = Bookmark.query.filter_by(id=bookmarkId).first()
+    article = None
 
-    display = bbc_article_content_scrape(bookmark.url)
+    # determine which scraping tools to use
+    if bookmark.source == 'BBC News':
+        article = bbc_article_content_scrape(bookmark.url)
+    elif bookmark.source == 'Sky News':
+        article = '<h1>NOpe</h1>'
+    else:
+        article = '<h1>NOpe</h1>'
 
-    return render_template('bookmark/view.html', bookmark_title=bookmark.title, article=display)
-
+    return render_template('bookmark/view.html', bookmark_title=bookmark.title, article=article)
 
 @app.route('/library/<collectionId>/<bookmarkId>/like', methods=['POST'])
 def increment_like(collectionId, bookmarkId):
