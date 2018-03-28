@@ -121,6 +121,7 @@ def collection(collectionId):
 
 @app.route('/library/<collectionId>/change-edit-status', methods=['POST'])
 def change_edit_status(collectionId):
+    """ Collection method to change edit status """
     if 'edit_bookmark_status' in session:
         edit_bookmark_status = session['edit_bookmark_status']
         session['edit_bookmark_status'] = not edit_bookmark_status
@@ -209,7 +210,7 @@ def delete_bookmark(collectionId):
     # decrement num_bookmarks from collection
     collection = Collection.query.filter_by(id=collectionId).first()
     collection.num_bookmarks -= 1
-    
+
     db.session.commit()
 
     return redirect(url_for('collection', collectionId=collectionId))
@@ -227,8 +228,9 @@ def scrape(collectionId):
     bookmark = None
     meta = None
 
-    collectionId = collectionId
-
+    # TODO: throw error if already a bookmark
+    # TODO: implement proper categories
+    
     if form.validate_on_submit() and current_user:
         url_to_scrape = form.url.data
         meta = article_meta_scrape(current_user, url_to_scrape)
@@ -291,6 +293,9 @@ def show_bookmark(collectionId, bookmarkId):
         article = '<h1>NOpe</h1>'
 
     return render_template('bookmark/view.html', bookmark_title=bookmark.title, article=article)
+
+
+# TODO: add share method
 
 @app.route('/library/<collectionId>/<bookmarkId>/like', methods=['POST'])
 def increment_like(collectionId, bookmarkId):

@@ -10,7 +10,7 @@
         <div class="row social__post boxshadow">
           <div class="col-md-12">
             {% from "_formhelpers.html" import render_field %}
-            <form>
+            <form method="POST" action="{{ url_for('social_post') }}">
               {{ form.hidden_tag() }}
               <div class="form-row">
                 <div class="offset-md-2"></div>
@@ -46,9 +46,19 @@
 
           <div class="col-md-5 social__timeline--comments">
 
-            <div class="card">
+            <div class="card post">
               <div class="card-body">
                 <h4 class="card-title">Posted by Jason Bartok <span class="social__timeline--postdate"> on Mon 26th March 2018</span></h4>
+                <p>This is my view on this breaking news. I think it is terrible! How can politics be in the state it is today?</p>
+                <hr/>
+                <div class="row">
+                  <div class="col-md-1"></div>
+                  <button class="btn btn-primary col-md-3">Likes</button>
+                  <div class="col-md-3"></div>
+                  <button class="btn btn-primary col-md-3">Dislikes</button>
+                  <div class="col-md-1"></div>
+                </div>
+                <hr/>
                 <div class="comment">
                   <div class="comment__wrapper">
                     <img class="img-thumbnail comment__wrapper--img" src="https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png" alt="profile picture" />
@@ -64,6 +74,7 @@
                 <a href="#">Read more</a>
               </div>
 
+              <!-- TODO: make 'comment' button which expands to this -->
               <div class="comment__comment-entry">
                 <hr/>
                 <form class="form-inline">
