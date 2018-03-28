@@ -11,6 +11,7 @@ from bookmark.form import SearchForm, ScrapeForm, EditForm
 from flask_newsmarkr import db, uploaded_images
 from user.models import User
 from bookmark.models import Collection, Bookmark, Category
+from social.models import Post
 
 # import custom decorators
 from user.decorators import login_required
@@ -230,7 +231,7 @@ def scrape(collectionId):
 
     # TODO: throw error if already a bookmark
     # TODO: implement proper categories
-    
+
     if form.validate_on_submit() and current_user:
         url_to_scrape = form.url.data
         meta = article_meta_scrape(current_user, url_to_scrape)
@@ -296,20 +297,3 @@ def show_bookmark(collectionId, bookmarkId):
 
 
 # TODO: add share method
-
-@app.route('/library/<collectionId>/<bookmarkId>/like', methods=['POST'])
-def increment_like(collectionId, bookmarkId):
-    """ Bookmark method to increment number of likes """
-    bookmark = Bookmark.query.filter_by(id=bookmarkId).first()
-    bookmark.likes += 1
-    db.session.commit()
-    return redirect(url_for('collection', collectionId=collectionId))
-
-
-@app.route('/library/<collectionId>/<bookmarkId>/dislike', methods=['POST'])
-def increment_dislike(collectionId, bookmarkId):
-    """ Bookmark method to increment number of dislikes """
-    bookmark = Bookmark.query.filter_by(id=bookmarkId).first()
-    bookmark.dislikes += 1
-    db.session.commit()
-    return redirect(url_for('collection', collectionId=collectionId))

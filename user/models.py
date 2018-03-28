@@ -36,19 +36,23 @@ class User(db.Model):
     email = db.Column(db.String(35), unique=True) # want only one user with same email per table
     username = db.Column(db.String(80), unique=True) # want only one user with same username per table
     password = db.Column(db.String(60)) # 60 chars for bcrypt hashed password standard
+    image = db.Column(db.String(256))
     # create flag for permissions
     is_admin = db.Column(db.Boolean)
 
     # bookmarks relationship with user -> so that we can do bookmarks.user and get the bookmarks' user
     bookmarks = db.relationship('Bookmark', backref='user', lazy='dynamic')
+    post = db.relationship('Post', backref='user', lazy='dynamic')
+    comment = db.relationship('Comment', backref='user', lazy='dynamic')
 
     # constructor called when class is instantiated for first time
-    def __init__(self, fullname, email, username, password, is_admin=False):
+    def __init__(self, fullname, email, username, password, is_admin=False, image='https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png'):
         self.fullname = fullname
         self.email = email
         self.username = username
         self.password = password
         self.is_admin = is_admin
+        self.image = image
 
     # representation - how do you want to display this when interacting with it in, say, the terminal?
     def __repr__(self):

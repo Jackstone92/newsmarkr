@@ -7,3 +7,6 @@ class PostForm(FlaskForm):
         validators.URL(False, 'Please make sure you enter a valid URL...')
     ])
     post = TextAreaField('', validators=[validators.Required()])
+
+class CommentForm(FlaskForm):
+    comment = TextAreaField('', validators=[validators.Required()])

@@ -13,3 +13,4 @@ lxml
 html5lib
 requests
 feedparser
+flask-restful
