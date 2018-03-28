@@ -205,6 +205,11 @@ def delete_bookmark(collectionId):
     bookmark_to_delete = Bookmark.query.filter_by(id=bookmarkId).first()
     # delete bookmark
     db.session.delete(bookmark_to_delete)
+    db.session.flush()
+    # decrement num_bookmarks from collection
+    collection = Collection.query.filter_by(id=collectionId).first()
+    collection.num_bookmarks -= 1
+    
     db.session.commit()
 
     return redirect(url_for('collection', collectionId=collectionId))
