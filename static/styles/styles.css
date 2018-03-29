@@ -119,15 +119,26 @@ body {
 }
 
 /* ======== Browse ======== */
+.browse__header {
+  height: 600px;
+  background-image: url('/static/images/browse.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
 .browse__articles {
   margin-left:10px;
   margin-right:10px;
+}
+.browse__articles:hover {
+  cursor: pointer;
 }
 
 .browse__articles--card {
   margin-bottom:20px;
 }
-
 
 
 /* ======== Social ======== */
@@ -161,9 +172,17 @@ body {
 .social__timeline--article {
 
 }
+.social__timeline--article:hover {
+  cursor: pointer;
+}
 
 .social__timeline--comments {
 
+}
+
+.social__timeline--comment-wrapper {
+  max-height: 30vh;
+  overflow-y: scroll;
 }
 
 .social__timeline--postdate {
@@ -217,7 +236,48 @@ body {
   resize: none;
 }
 
+.social__view--nav {
 
+}
+
+.social__view--nav h1 {
+  font-size: 35px;
+  margin-bottom: 18px;
+}
+
+.social__view--nav-back-button {
+  padding-left: 40px;
+}
+
+.social__view {
+
+}
+
+.social__view--article {
+
+}
+
+.social__view-article-wrapper {
+  padding: 20px;
+  max-height: 85vh;
+  overflow-y: scroll;
+}
+
+.social__view-comments {
+
+}
+
+.social__view-comments .card-title {
+  font-size: 22px;
+}
+
+.social__view--postdate {
+  font-size: 12px;
+}
+
+.social__view--comment-wrapper {
+
+}
 
 /* ======== Profile ======== */
 .profile {

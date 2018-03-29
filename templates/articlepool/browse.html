@@ -3,8 +3,8 @@
 {% block title %}Browse Headlines{% endblock %}
 
 {% block content %}
-  <div class="jumbotron">
-    <br/>
+  <div class="jumbotron browse__header">
+    <br/><br/><br/><br/><br/>
     <h1 class="text-center">Browse Headlines</h1>
     <br/>
     <h5 class="text-center">And join the live conversation</h5>
@@ -12,8 +12,8 @@
 
   <div class="row browse__articles">
     {% for article in articles %}
-      <div class="col-sm-3 browse__articles--card">
-        <div class="card">
+      <div class="col-sm-3 browse__articles--card" onclick="window.location.href='{{ url_for('view_browse_article', articleTitle=article.title, article_url=article.link) }}'">
+        <div class="card boxshadow">
           <img class="card-img-top" src="{{ article.media_thumbnail[0]['url'] if article.media_thumbnail else 'err' }}" alt="Card image cap" />
           <div class="card-body">
             <h4 class="card-title">{{ article.title if article.title else 'err' }}</h4>
@@ -21,15 +21,21 @@
             <p class="card-text">{{ article.summary if article.summary else 'err' }}</p>
           </div>
           <ul class="list-group list-group-flush">
-            <!-- <li class="list-group-item text-center">Source: {{ article.source }}</li> -->
             <li class="list-group-item text-center">Published: {{ article.published if article.published else 'err' }}</li>
+            <li class="list-group-item text-center">
+              <div class="row">
+                <div class="col-md-1"></div>
+                <form class="col-md-4" method="POST" action="{{ url_for('share_browse_article', articleTitle=article.title, share_url=article.link) }}">
+                  <button class="btn btn-primary col-md-12"><i class="fa fa-share-square"></i> Share</button>
+                </form>
+                <div class="col-md-2"></div>
+                <form class="col-md-4" method="POST" action="{{ url_for('bookmark_browse_article', articleTitle=article.title, bookmark_url=article.link) }}">
+                  <button class="btn btn-secondary col-md-12">Bookmark</button>
+                </form>
+                <div class="col-md-1"></div>
+              </div>
+            </li>
           </ul>
-          <ul class="list-group list-group-flush">
-            <a href="{{ article.link if article.link else '' }}" target="_blank" class="card-link list-group-item text-center">Go To Headline</a>
-          </ul>
-          <div class="card-body">
-
-          </div>
         </div>
       </div>
     {% endfor %}

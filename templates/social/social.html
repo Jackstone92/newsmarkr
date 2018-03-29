@@ -16,7 +16,11 @@
                 <div class="offset-md-2"></div>
                 <div class="form-group col-md-8">
                   <h1>What's your view on...?</h1>
-                  {{ render_field(form.url, class='form-control', type='url', placeholder='Enter article url...') }}
+                  {% if share_url %}
+                    {{ render_field(form.url, class='form-control', type='url', value=share_url) }}
+                  {% else %}
+                    {{ render_field(form.url, class='form-control', type='url', placeholder='Enter article url...') }}
+                  {% endif %}
                   {{ render_field(form.post, class='form-control', rows='3', columns='3', placeholder="What's on your mind?") }}
                 </div>
                 <div class="offset-md-2"></div>
@@ -24,7 +28,7 @@
               <div class="form-row">
                 <div class="offset-md-6"></div>
                 <div class="form-group col-md-4">
-                  <button class="btn btn-primary btn-block" type="submit">Post</button>
+                  <button class="btn btn-success btn-block" type="submit">Post</button>
                 </div>
                 <div class="offset-md-2"></div>
               </div>
@@ -38,7 +42,7 @@
         {% for post in posts %}
           <div class="row social__timeline">
 
-            <div class="col-md-7 social__timeline--article" onclick="window.location.href='{{ url_for('show_bookmark', collectionId=post.collection_id, bookmarkId=post.bookmark_id) }}'">
+            <div class="col-md-7 social__timeline--article" onclick="window.location.href='{{ url_for('show_social_article', postId=post.id) }}'">
               <div class="card">
                 <img class="card-img-top" src="{{ post.image }}" alt="Card image cap" />
                 <div class="card-body">
@@ -53,29 +57,29 @@
 
             <div class="col-md-5 social__timeline--comments">
 
-              <div class="card post">
+              <div class="card post boxshadow">
                 <div class="card-body">
                   <h4 class="card-title">Posted by {{ User.query.filter_by(id=post.user_id).first().username }} <span class="social__timeline--postdate"> on {{ post.posted_on }}</span></h4>
                   <p>{{ post.post }}</p>
                   <hr/>
                   <div class="row">
+                    <div class="col-md-1"></div>
                     <div class="col-md-1">
                       <p>{{ post.num_likes }}</p>
                     </div>
-                    <form class="col-md-3" method="POST" action="{{ url_for('increment_post_like', postId=post.id) }}">
-                      <button class="btn btn-primary col-md-12">Like</button>
+                    <form class="col-md-4" method="POST" action="{{ url_for('increment_post_like', postId=post.id) }}">
+                      <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-up"></i> Like</button>
                     </form>
-                    <div class="col-md-3"></div>
                     <div class="col-md-1">
                       <p>{{ post.num_dislikes }}</p>
                     </div>
-                    <form class="col-md-3" method="POST" action="{{ url_for('increment_post_dislike', postId=post.id) }}">
-                      <button class="btn btn-primary col-md-12">Dislike</button>
+                    <form class="col-md-4" method="POST" action="{{ url_for('increment_post_dislike', postId=post.id) }}">
+                      <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-down"></i> Dislike</button>
                     </form>
                   </div>
 
                   <hr/>
-
+                  <div class="social__timeline--comment-wrapper">
                   {% for comment in Comment.query.filter_by(post_id=post.id) %}
                     <div class="comment">
                       <div class="comment__wrapper">
@@ -87,6 +91,7 @@
                       </div>
                     </div>
                   {% endfor %}
+                  </div>
                 </div>
 
                 <!-- <div class="comment__readmore">
@@ -97,7 +102,7 @@
                   <hr/>
                   {% from "_formhelpers.html" import render_field %}
                   <form class="form-inline" method="POST" action="{{ url_for('comment', postId=post.id) }}">
-                    {{ form.hidden_tag() }}
+                    {{ comment_form.hidden_tag() }}
                     <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.image }}" />
                     <!-- <textarea class="form-control" rows="2" columns="3" placeholder="Write a comment..." required></textarea> -->
                     {{ render_field(comment_form.comment, class='form-control', rows='2', columns='3', placeholder="Write a comment...", required=True) }}

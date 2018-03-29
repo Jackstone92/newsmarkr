@@ -25,11 +25,35 @@ def social():
     current_user = User.query.filter_by(username=session['username']).first()
     form = PostForm()
     comment_form = CommentForm()
+    share_url = None
 
-    posts = Post.query.filter_by(user_id=current_user.id)
+    if request.args.get('share_url'):
+        share_url = request.args.get('share_url')
+
+    posts = Post.query.filter_by(user_id=current_user.id).order_by('id desc')
     articles = Bookmark.query.filter_by(user_id=current_user.id)
 
-    return render_template('social/social.html', form=form, comment_form=comment_form, posts=posts, articles=articles, current_user=current_user, User=User, Comment=Comment)
+    return render_template('social/social.html', share_url=share_url, form=form, comment_form=comment_form, posts=posts, articles=articles, current_user=current_user, User=User, Comment=Comment)
+
+
+@app.route('/social-feed/<postId>', methods=['GET', 'POST'])
+def show_social_article(postId):
+    """ Social-Feed display page """
+    current_user = User.query.filter_by(username=session['username']).first()
+    comment_form = CommentForm()
+    post = Post.query.filter_by(id=postId).first()
+    article = None
+
+    # determine which scraping tools to use
+    if post.source == 'BBC News':
+        article = bbc_article_content_scrape(post.url)
+    elif post.source == 'Sky News':
+        article = '<h1>NOpe</h1>'
+    else:
+        article = '<h1>NOpe</h1>'
+
+    return render_template('social/view.html', comment_form=comment_form, post=post, article_title=post.title, article=article, current_user=current_user, User=User, Comment=Comment)
+
 
 @app.route('/social-feed/post', methods=['POST'])
 def social_post():
@@ -155,6 +179,9 @@ def comment(postId):
         post.num_comments += 1
 
         db.session.commit()
+
+        if request.args.get('current_page') == 'View':
+            return redirect(url_for('show_social_article', postId=postId))
 
     return redirect(url_for('social'))
 

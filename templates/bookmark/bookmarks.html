@@ -14,9 +14,11 @@
         <div class="col-md-6">
           <button class="btn btn-secondary" onclick="window.location.href='/library'"><span><i class="fa fa-chevron-left"></i></span> Back</button>
         </div>
-        <div class="col-md-6">
-          <button class="btn btn-warning" data-toggle="modal" data-target="#editModal" style="float: right;">Edit Collection</button>
-        </div>
+        {% if collection.name != 'Posts' %}
+          <div class="col-md-6">
+            <button class="btn btn-warning" data-toggle="modal" data-target="#editModal" style="float: right;">Edit Collection</button>
+          </div>
+        {% endif %}
       </div>
       <h1 class="text-center">{{ collection.name }}</h1>
       <br/>
@@ -85,12 +87,12 @@
             {% else %}
             <ul class="list-group list-group-flush">
               <li class="list-group-item text-center">Source: {{ bookmark.source }}</li>
+              <li class="list-group-item text-center">
+                <form class="col-md-12" method="POST" action="{{ url_for('share_browse_article', articleTitle=bookmark.title, share_url=bookmark.url) }}">
+                  <button class="btn btn-primary col-md-12"><i class="fa fa-share-square"></i> Share</button>
+                </form>
+              </li>
             </ul>
-            <div class="card-body">
-              <form method="POST" action="{{ url_for('increment_like', collectionId=collection.id, bookmarkId=bookmark.id) }}" class="col-md-12">
-                <button class="btn btn-secondary col-md-12">Share</button>
-              </form>
-            </div>
             {% endif %}
           </div>
         </div>

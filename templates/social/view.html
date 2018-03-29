@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article_title }}{% endblock %}
+
+{% block content %}
+  <br/><br/><br/><br/>
+  <div class="row social__view--nav">
+    <div class="col-md-4 social__view--nav-back-button">
+      <button class="btn btn-secondary" onclick="window.location.href='{{ url_for('social') }}'">Back</button>
+      <br/><br/>
+    </div>
+    <h1 class="col-md-4 text-center">{{ article_title }}</h1>
+  </div>
+
+  <div class="row social__view">
+
+    <div class="col-md-7 col-sm-12 social__view-article boxshadow">
+      <div class="social__view-article-wrapper">
+        <!-- mark html as safe -->
+        {{ article|safe }}
+      </div>
+    </div>
+
+    <div class="col-md-5 col-sm-12 social__view-comments">
+      <div class="card post boxshadow">
+        <div class="card-body">
+          <h4 class="card-title">Posted by {{ User.query.filter_by(id=post.user_id).first().username }} <span class="social__view--postdate"> on {{ post.posted_on }}</span></h4>
+          <p>{{ post.post }}</p>
+          <hr/>
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-1">
+              <p>{{ post.num_likes }}</p>
+            </div>
+            <form class="col-md-4" method="POST" action="{{ url_for('increment_post_like', postId=post.id) }}">
+              <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-up"></i> Like</button>
+            </form>
+            <div class="col-md-1">
+              <p>{{ post.num_dislikes }}</p>
+            </div>
+            <form class="col-md-4" method="POST" action="{{ url_for('increment_post_dislike', postId=post.id) }}">
+              <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-down"></i> Dislike</button>
+            </form>
+          </div>
+
+          <hr/>
+          <div class="social__view--comment-wrapper">
+          {% for comment in Comment.query.filter_by(post_id=post.id) %}
+            <div class="comment">
+              <div class="comment__wrapper">
+                <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().image }}" alt="profile picture" />
+                <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().username }}</p>
+              </div>
+              <div class="comment__wrapper--comment">
+                <p>{{ comment.comment }}</p>
+              </div>
+            </div>
+          {% endfor %}
+          </div>
+        </div>
+
+        <div class="comment__comment-entry">
+          <hr/>
+          {% from "_formhelpers.html" import render_field %}
+          <form class="form-inline" method="POST" action="{{ url_for('comment', postId=post.id, current_page='View') }}">
+            {{ comment_form.hidden_tag() }}
+            <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.image }}" />
+            <!-- <textarea class="form-control" rows="2" columns="3" placeholder="Write a comment..." required></textarea> -->
+            {{ render_field(comment_form.comment, class='form-control', rows='2', columns='3', placeholder="Write a comment...", required=True) }}
+            <button class="btn btn-primary" type="submit">Post</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}

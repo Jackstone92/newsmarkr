@@ -216,7 +216,7 @@ def delete_bookmark(collectionId):
 
     return redirect(url_for('collection', collectionId=collectionId))
 
-@app.route('/library/<collectionId>/scrape', methods=['POST'])
+@app.route('/library/<collectionId>/scrape', methods=['GET', 'POST'])
 def scrape(collectionId):
     """ Bookmark scrape method """
     form = ScrapeForm()
@@ -225,16 +225,21 @@ def scrape(collectionId):
     else:
         error = None
     current_user = User.query.filter_by(username=session['username']).first()
-    url_to_scrape = None
+
+    if request.args.get('bookmark_url'):
+        url_to_scrape = request.args.get('bookmark_url')
+        meta = article_meta_scrape(current_user, url_to_scrape)
+    elif form.validate_on_submit():
+        url_to_scrape = form.url.data
+        meta = article_meta_scrape(current_user, url_to_scrape)
+    else:
+        url_to_scrape = None
+        meta = None
+
     bookmark = None
-    meta = None
 
     # TODO: throw error if already a bookmark
     # TODO: implement proper categories
-
-    if form.validate_on_submit() and current_user:
-        url_to_scrape = form.url.data
-        meta = article_meta_scrape(current_user, url_to_scrape)
 
     if meta:
         # set up temp category for bookmark
@@ -267,6 +272,7 @@ def scrape(collectionId):
             return redirect(url_for('collection', collectionId=collectionId))
         else:
             error = 'Please try a different URL...'
+
     else:
         error = 'Please try a different URL...'
 
