@@ -43,7 +43,8 @@ class User(db.Model):
     # bookmarks relationship with user -> so that we can do bookmarks.user and get the bookmarks' user
     bookmarks = db.relationship('Bookmark', backref='user', lazy='dynamic')
     post = db.relationship('Post', backref='user', lazy='dynamic')
-    comment = db.relationship('Comment', backref='user', lazy='dynamic')
+    comments = db.relationship('Comment', backref='user', lazy='dynamic')
+    live_comments = db.relationship('LiveComment', backref='user', lazy='dynamic')
 
     # constructor called when class is instantiated for first time
     def __init__(self, fullname, email, username, password, is_admin=False, image='https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png'):

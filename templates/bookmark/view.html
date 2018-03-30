@@ -3,12 +3,22 @@
 {% block title %}{{ bookmark_title }}{% endblock %}
 
 {% block content %}
-  <br/>
-  <div class="row justify-content-center">
+  <br/><br/><br/><br/>
+  <div class="row library__bookmark-view--nav">
+    <div class="col-md-4 library__bookmark-view--nav-back-button">
+      <button class="btn btn-secondary" onclick="window.location.href='{{ url_for('collection', collectionId=collectionId) }}'"><span><i class="fa fa-chevron-left"></i></span> Back</button>
+      <br/><br/>
+    </div>
+    <h1 class="col-md-4 text-center">{{ bookmark_title }}</h1>
+  </div>
+
+  <div class="row justify-content-center library__bookmark-view-article">
     <div class="col-md-3 offset-md-3 col-sm-0 offset-sm-0"></div>
-    <div class="col-md-8 col-sm-12">
-      <!-- mark html as safe -->
-      {{ article|safe }}
+    <div class="col-md-8 col-sm-12 boxshadow">
+      <div class="library__bookmark-view-article-wrapper">
+        <!-- mark html as safe -->
+        {{ article|safe }}
+      </div>
     </div>
     <div class="col-md-3 offset-md-3 col-sm-0 offset-sm-0"></div>
   </div>

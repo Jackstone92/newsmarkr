@@ -1,14 +1,21 @@
 from flask_newsmarkr import app
 from flask import render_template, redirect, flash, url_for, session, abort, request
 
+from datetime import datetime
+
 # feedparser for parsing rss feeds
 import feedparser
 
+# import python-slugify for slug generation
+from slugify import slugify
+
 from flask_newsmarkr import db
 from user.models import User
-from bookmark.models import Collection
+from bookmark.models import Collection, Bookmark
+from articlepool.models import ArticlePool, LiveComment
+from articlepool.form import LiveCommentForm
 
-from utils.scrape import article_meta_scrape, article_content_scrape
+from utils.scrape import article_meta_scrape, article_content_scrape, bbc_article_content_scrape
 
 # dictionary of rss feed urls
 RSS_FEEDS = {
@@ -19,22 +26,67 @@ RSS_FEEDS = {
 
 @app.route('/browse-headlines', methods=['GET'])
 def browse():
-    articles = []
+    current_user = User.query.filter_by(username=session['username']).first()
+    meta = None
+    article_pool = None
 
     for key in RSS_FEEDS:
         feed = feedparser.parse(RSS_FEEDS[key])
         for entry in feed['entries']:
-            articles.append(entry)
+            url_to_scrape = entry.link
+            entry_title = entry.title
+            entry_summary = entry.summary
+            article_exists = ArticlePool.query.filter_by(url=url_to_scrape).first()
+            # if entries are not already in ArticlePool, add them
+            if not article_exists or article_exists.url != url_to_scrape:
+                # add new
+                meta = article_meta_scrape(current_user, url_to_scrape)
 
-    return render_template('articlepool/browse.html', articles=articles)
+                title = meta['title']
+                description = meta['description']
+                url = meta['url']
+                image = meta['image']
+                source = meta['source']
+                slug = slugify(title)
+                published_on = entry.published
 
-@app.route('/browse-headlines/<articleTitle>', methods=['GET'])
-def view_browse_article(articleTitle):
+                article_pool = ArticlePool(
+                    url,
+                    title,
+                    description,
+                    None,
+                    image,
+                    None,
+                    published_on,
+                    0,
+                    0,
+                    source,
+                    slug
+                )
 
-    article_title = articleTitle
+                db.session.add(article_pool)
+                db.session.commit()
 
+    articles = ArticlePool.query.order_by('published_on desc')
 
-    return render_template('articlepool/view.html', article_title=articleTitle, article='<h1>Article</h1>')
+    return render_template('articlepool/browse.html', articles=articles, current_user=current_user, Bookmark=Bookmark)
+
+@app.route('/browse-headlines/<articleId>', methods=['GET'])
+def view_browse_article(articleId):
+    # TODO: fix 'post' in view.html
+    article_pool = ArticlePool.query.filter_by(id=articleId).first()
+    current_user = User.query.filter_by(username=session['username']).first()
+    live_comment_form = LiveCommentForm()
+
+    # determine which scraping tools to use
+    if article_pool.source == 'BBC News':
+        article = bbc_article_content_scrape(article_pool.url)
+    elif article_pool.source == 'Sky News':
+        article = '<h1>NOpe</h1>'
+    else:
+        article = '<h1>NOpe</h1>'
+
+    return render_template('articlepool/view.html', live_comment_form=live_comment_form, article_pool=article_pool, article=article, LiveComment=LiveComment, current_user=current_user)
 
 
 @app.route('/browse-headlines/<articleTitle>/share', methods=['POST'])

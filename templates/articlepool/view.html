@@ -1,15 +1,79 @@
 {% extends "base.html" %}
 
-{% block title %}{{ article_title }}{% endblock %}
+{% block title %}{{ article_pool.title }}{% endblock %}
 
 {% block content %}
-  <br/>
-  <div class="row justify-content-center">
-    <div class="col-md-3 offset-md-3 col-sm-0 offset-sm-0"></div>
-    <div class="col-md-8 col-sm-12">
-      <!-- mark html as safe -->
-      {{ article|safe }}
+  <br/><br/><br/><br/>
+  <div class="row browse__view--nav">
+    <div class="col-md-4 browse__view--nav-back-button">
+      <button class="btn btn-secondary" onclick="window.location.href='{{ url_for('browse') }}'">
+        <span><i class="fa fa-chevron-left"></i></span> Back
+      </button>
+      <br/><br/>
     </div>
-    <div class="col-md-3 offset-md-3 col-sm-0 offset-sm-0"></div>
+    <h1 class="col-md-4 text-center">{{ article_pool.title }}</h1>
+  </div>
+
+  <div class="row social__view">
+
+    <div class="col-md-7 col-sm-12 browse__view--article boxshadow">
+      <div class="browse__view--article-wrapper">
+        <!-- mark html as safe -->
+        {{ article|safe }}
+      </div>
+    </div>
+
+    <div class="col-md-5 col-sm-12 browse__view--live-comments">
+      <div class="card post boxshadow">
+        <div class="card-body">
+          <h4 class="card-title">Join the global conversation...</h4>
+          <p class="browse__view-post">What do you think about this story?</p>
+          <hr/>
+          <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-1">
+              <p>{{ article_pool.num_likes }}</p>
+            </div>
+            <form class="col-md-4" method="POST" action="">
+              <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-up"></i> Like</button>
+            </form>
+            <div class="col-md-1">
+              <p>{{ article_pool.num_dislikes }}</p>
+            </div>
+            <form class="col-md-4" method="POST" action="">
+              <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-down"></i> Dislike</button>
+            </form>
+          </div>
+
+          <hr/>
+          <div class="social__view--comment-wrapper">
+          {% for comment in LiveComment.query.filter_by(article_pool_id=article_pool.id) %}
+            <div class="comment">
+              <div class="comment__wrapper">
+                <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().image }}" alt="profile picture" />
+                <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().username }}</p>
+              </div>
+              <div class="comment__wrapper--comment">
+                <p>{{ comment.comment }}</p>
+              </div>
+            </div>
+          {% endfor %}
+          </div>
+        </div>
+
+        <div class="comment__comment-entry">
+          <hr/>
+          {% from "_formhelpers.html" import render_field %}
+          <form class="form-inline" method="POST" action="">
+            {{ live_comment_form.hidden_tag() }}
+            <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.image }}" />
+            <!-- <textarea class="form-control" rows="2" columns="3" placeholder="Write a comment..." required></textarea> -->
+            {{ render_field(live_comment_form.comment, class='form-control', rows='2', columns='3', placeholder="Write a comment...", required=True) }}
+            <button class="btn btn-primary" type="submit">Post</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
   </div>
 {% endblock %}

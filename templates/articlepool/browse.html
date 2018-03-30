@@ -11,33 +11,37 @@
   </div>
 
   <div class="row browse__articles">
+    {% if articles %}
     {% for article in articles %}
-      <div class="col-sm-3 browse__articles--card" onclick="window.location.href='{{ url_for('view_browse_article', articleTitle=article.title, article_url=article.link) }}'">
+      <div class="col-sm-3 browse__articles--card" onclick="window.location.href='{{ url_for('view_browse_article', articleId=article.id) }}'">
         <div class="card boxshadow">
-          <img class="card-img-top" src="{{ article.media_thumbnail[0]['url'] if article.media_thumbnail else 'err' }}" alt="Card image cap" />
+          <img class="card-img-top" src="{{ article.image }}" alt="Card image cap" />
           <div class="card-body">
-            <h4 class="card-title">{{ article.title if article.title else 'err' }}</h4>
-            <!-- <p class="card-text">{{ article }}</p> -->
-            <p class="card-text">{{ article.summary if article.summary else 'err' }}</p>
+            <h4 class="card-title">{{ article.title }}</h4>
+            <p class="card-text">{{ article.description }}</p>
           </div>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item text-center">Published: {{ article.published if article.published else 'err' }}</li>
+            <li class="list-group-item text-center">Published: {{ article.published_on }}</li>
             <li class="list-group-item text-center">
               <div class="row">
-                <div class="col-md-1"></div>
-                <form class="col-md-4" method="POST" action="{{ url_for('share_browse_article', articleTitle=article.title, share_url=article.link) }}">
+                <form class="col-md-5" method="POST" action="{{ url_for('share_browse_article', articleTitle=article.title, share_url=article.url) }}">
                   <button class="btn btn-primary col-md-12"><i class="fa fa-share-square"></i> Share</button>
                 </form>
                 <div class="col-md-2"></div>
-                <form class="col-md-4" method="POST" action="{{ url_for('bookmark_browse_article', articleTitle=article.title, bookmark_url=article.link) }}">
-                  <button class="btn btn-secondary col-md-12">Bookmark</button>
-                </form>
-                <div class="col-md-1"></div>
+                <!-- if already in library, disable ability to bookmark -->
+                {% if Bookmark.query.filter_by(user_id=current_user.id, url=article.url).first() %}
+                  <button class="btn btn-secondary col-md-5" disabled><i class="fa fa-bookmark"></i> Bookmarked</button>
+                {% else %}
+                  <form class="col-md-5" method="POST" action="{{ url_for('bookmark_browse_article', articleTitle=article.title, bookmark_url=article.url) }}">
+                    <button class="btn btn-secondary col-md-12"><i class="fa fa-bookmark"></i> Bookmark</button>
+                  </form>
+                {% endif %}
               </div>
             </li>
           </ul>
         </div>
       </div>
     {% endfor %}
+    {% endif %}
   </div>
 {% endblock %}

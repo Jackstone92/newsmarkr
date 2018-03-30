@@ -118,6 +118,30 @@ body {
   color: white;
 }
 
+.library__bookmark-view--nav {
+
+}
+
+.library__bookmark-view--nav h1 {
+  font-size: 35px;
+  margin-bottom: 18px;
+}
+
+
+.library__bookmark-view--nav-back-button {
+  padding-left: 40px;
+}
+
+.library__bookmark-view-article {
+
+}
+
+.library__bookmark-view-article-wrapper {
+  padding: 40px;
+  max-height: 85vh;
+  overflow-y: scroll;
+}
+
 /* ======== Browse ======== */
 .browse__header {
   height: 600px;
@@ -140,6 +164,36 @@ body {
   margin-bottom:20px;
 }
 
+.browse__view--nav {
+
+}
+
+.browse__view {
+
+}
+
+.browse__view--nav h1 {
+  font-size: 35px;
+  margin-bottom: 18px;
+}
+
+.browse__view--nav-back-button {
+  padding-left: 40px;
+}
+
+.browse__view--article {
+
+}
+
+.browse__view--article-wrapper {
+  padding: 20px;
+  max-height: 85vh;
+  overflow-y: scroll;
+}
+
+.browse__view--live-comments {
+
+}
 
 /* ======== Social ======== */
 .social {
@@ -269,6 +323,10 @@ body {
 
 .social__view-comments .card-title {
   font-size: 22px;
+}
+
+.social__view-post {
+  font-size: 16px;
 }
 
 .social__view--postdate {

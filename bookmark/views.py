@@ -259,7 +259,6 @@ def scrape(collectionId):
             # add bookmark to db
             title = meta['title']
             description = meta['description']
-            # description = 'this is a test'
             url = meta['url']
             image = meta['image']
             source = meta['source']
@@ -299,7 +298,7 @@ def show_bookmark(collectionId, bookmarkId):
     else:
         article = '<h1>NOpe</h1>'
 
-    return render_template('bookmark/view.html', bookmark_title=bookmark.title, article=article)
+    return render_template('bookmark/view.html', bookmark_title=bookmark.title, article=article, collectionId=collectionId)
 
 
 # TODO: add share method
