@@ -38,7 +38,7 @@ def browse():
             entry_summary = entry.summary
             article_exists = ArticlePool.query.filter_by(url=url_to_scrape).first()
             # if entries are not already in ArticlePool, add them
-            if not article_exists or article_exists.url != url_to_scrape:
+            if not article_exists or article_exists and article_exists.url != url_to_scrape:
                 # add new
                 meta = article_meta_scrape(current_user, url_to_scrape)
 
@@ -66,6 +66,8 @@ def browse():
 
                 db.session.add(article_pool)
                 db.session.commit()
+            else:
+                break;
 
     articles = ArticlePool.query.order_by('published_on desc')
 

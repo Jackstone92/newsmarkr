@@ -195,6 +195,14 @@ body {
 
 }
 
+.browse__view--live-comments .card-title {
+  font-size: 22px;
+}
+
+.browse__view-post {
+  font-size: 16px;
+}
+
 /* ======== Social ======== */
 .social {
   width: 100%;
