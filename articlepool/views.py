@@ -86,7 +86,9 @@ def view_browse_article(articleId):
     else:
         article = '<h1>NOpe</h1>'
 
-    return render_template('articlepool/view.html', live_comment_form=live_comment_form, article_pool=article_pool, article=article, LiveComment=LiveComment, current_user=current_user)
+    live_comments = LiveComment.query.filter_by(article_pool_id=articleId)
+
+    return render_template('articlepool/view.html', live_comment_form=live_comment_form, article_pool=article_pool, article=article, live_comments=live_comments, current_user=current_user, User=User)
 
 
 @app.route('/browse-headlines/<articleTitle>/share', methods=['POST'])
@@ -126,3 +128,46 @@ def bookmark_browse_article(articleTitle):
         collectionId = collection.id
 
     return redirect(url_for('scrape', collectionId=collectionId, bookmark_url=bookmark_url))
+
+
+@app.route('/browse-headlines/<articleId>/like', methods=['POST'])
+def increment_browse_like(articleId):
+    """ Social-Feed Post method to increment number of likes """
+    article_pool = ArticlePool.query.filter_by(id=articleId).first()
+    article_pool.likes += 1
+    db.session.commit()
+    return redirect(url_for('view_browse_article', articleId=articleId))
+
+
+@app.route('/browse-headlines/<articleId>/dislike', methods=['POST'])
+def increment_browse_dislike(articleId):
+    """ Social-Feed Post method to increment number of dislikes """
+    article_pool = ArticlePool.query.filter_by(id=articleId).first()
+    article_pool.dislikes += 1
+    db.session.commit()
+    return redirect(url_for('view_browse_article', articleId=articleId))
+
+
+@app.route('/browse-headlines/<articleId>/comment', methods=['POST'])
+def browse_comment(articleId):
+    current_user = User.query.filter_by(username=session['username']).first()
+    live_comment_form = LiveCommentForm()
+
+    if live_comment_form.validate_on_submit():
+        form_comment = live_comment_form.comment.data
+
+        live_comment = LiveComment(
+            articleId,
+            current_user.id,
+            datetime.utcnow(),
+            form_comment
+        )
+
+        db.session.add(live_comment)
+        db.session.flush()
+
+        # TODO: increment num_comments
+
+        db.session.commit()
+
+    return redirect(url_for('view_browse_article', articleId=articleId))

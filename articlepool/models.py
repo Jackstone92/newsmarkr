@@ -41,8 +41,8 @@ class LiveComment(db.Model):
     posted_on = db.Column(db.Date)
     comment = db.Column(db.Text())
 
-    def __init__(self, post_id, user_id, posted_on, comment):
-        self.post_id = post_id
+    def __init__(self, article_pool_id, user_id, posted_on, comment):
+        self.article_pool_id = article_pool_id
         self.user_id = user_id
         self.posted_on = posted_on
         self.comment = comment
