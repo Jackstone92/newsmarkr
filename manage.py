@@ -8,7 +8,19 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from flask_script import Manager, Server
 # import flask migrate
 from flask_migrate import MigrateCommand
+# import flask-restless for api
+import flask_restless
+# import database
+from flask_newsmarkr import db
+# import app
 from flask_newsmarkr import app
+
+# import models for endpoints
+from articlepool.models import ArticlePool, LiveComment
+from bookmark.models import Collection, Bookmark, Category
+# from profile.models import
+from social.models import Post, Comment
+from user.models import User
 
 
 # instantiate manger from that app
@@ -31,6 +43,19 @@ manager.add_command('runserver', Server(
     host = os.getenv('IP', '0.0.0.0'),
     port = int(os.getenv('PORT', 5000))
 ))
+
+
+# api manager
+api_manager = flask_restless.APIManager(app, flask_sqlalchemy_db=db)
+# api endpoints
+api_manager.create_api(ArticlePool, methods=['GET', 'POST', 'PUT', 'DELETE'])
+api_manager.create_api(LiveComment, methods=['GET', 'POST', 'PUT', 'DELETE'])
+api_manager.create_api(Collection, methods=['GET', 'POST', 'PUT', 'DELETE'])
+api_manager.create_api(Bookmark, methods=['GET', 'POST', 'PUT', 'DELETE'])
+api_manager.create_api(Category, methods=['GET', 'POST', 'PUT', 'DELETE'])
+api_manager.create_api(Post, methods=['GET', 'POST', 'PUT', 'DELETE'])
+api_manager.create_api(Comment, methods=['GET', 'POST', 'PUT', 'DELETE'])
+api_manager.create_api(User, methods=['GET', 'POST', 'PUT', 'DELETE'])
 
 
 # run server using following command:

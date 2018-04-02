@@ -2,6 +2,7 @@
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import flask_restless
 # add flask-migrate
 from flask_migrate import Migrate
 # import flask-markdown
