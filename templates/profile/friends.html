@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Timeline{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="container profile">
+
+      <div class="row profile__header">
+        <div class="col-md-12 profile__header--cover">
+          <div class="col-md-2 offset-md-2"></div>
+          <div class="col-md-3 profile__header--imgwrapper">
+            <img class="img-thumbnail" src="https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png" />
+          </div>
+          <div class="col-md-3 profile__header--name">
+            <h3>Ben Nissan</h3>
+          </div>
+          <div class="col-md-4 offset-md-6"></div>
+        </div>
+      </div>
+
+      <div class="row profile__nav">
+        <div class="col-md-12">
+          <ul class="nav nav-fill">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('profile') }}">Timeline</a>
+            </li>
+            <li class="nav-item active-nav-item">
+              <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Shares</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Edit Profile</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <br/>
+
+      <div class="row profile__friend-requests">
+        <!-- add a friend -->
+        <div class="col-md-12">
+          <h3>Add a Friend</h3>
+          {% from "_formhelpers.html" import render_field %}
+          <form class="form-inline justify-content-center" method="POST" action="{{ url_for('add_friend') }}">
+            {{ add_friends_form.hidden_tag() }}
+            {{ render_field(add_friends_form.username, class='form-control', placeholder="Enter a username...", required=True) }}
+            <button type="submit" class="btn btn-secondary">Add Friend</button>
+          </form>
+        </div>
+
+        {% if pending_requests.count() > 0 %}
+          <br/><br/><br/><br/>
+
+          <div class="col-md-12">
+            <h3>Pending Requests</h3>
+
+            {% for request in pending_requests %}
+              <div class="col-md-3">
+                <img class="img-thumbnail" src="{{ User.query.filter_by(id=request.friend_id).first().image }}" />
+                <h3 class="text-center">{{ User.query.filter_by(id=request.friend_id).first().username }}</h3>
+                <button class="btn btn-secondary" onclick="window.location.href = '{{ url_for('cancel_request', requestId=request.id) }}' ">Cancel Request</button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- friend requests -->
+        {% if friend_requests.count() > 0 %}
+          <br/><br/><br/><br/>
+
+          <div class="col-md-12">
+            <h3>Friend Requests</h3>
+          </div>
+          {% for friend_request in friend_requests %}
+            <div class="col-md-12">
+              <img class="img-thumbnail profile__friend-requests--img" src="https://dummyimage.com/100x100/000/fff" />
+              <h3>Todd Barker</h3>
+              <button class="btn btn-success">Accept</button>
+              <button class="btn btn-secondary">Ignore</button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <br/><br/><br/><br/>
+
+      <div class="row profile__friend-requests--list">
+        <!-- friends list -->
+        <div class="col-md-12">
+          <h3>Friends</h3>
+        </div>
+
+        {% if friends.count() > 0 %}
+          {% for friend in friends %}
+            <div class="col-md-3">
+              <img class="img-thumbnail" src="https://dummyimage.com/250x250/000/fff" />
+              <h3 class="text-center">Friend</h3>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-md-12">
+            <p class="text-center">You don't currently have any friends</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <br/><br/><br/><br/>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
