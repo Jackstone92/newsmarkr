@@ -34,10 +34,10 @@ def friends():
     add_friends_form = AddFriendsForm()
     current_user = User.query.filter_by(username=session['username']).first()
     friends = Friends.query.filter_by(user_id=current_user.id)
-    pending_requests = FriendRequest.query.filter_by(user_id=current_user.id, user_accepted=True, friend_accepted=False)
-    friend_requests = FriendRequest.query.filter_by(user_id=current_user.id, user_accepted=False)
+    pending_requests = FriendRequest.query.filter_by(user_id=current_user.id, user_accepted=True, friend_accepted=False, user_ignored=False, friend_ignored=False)
+    friend_requests = FriendRequest.query.filter_by(user_id=current_user.id, user_accepted=False, friend_accepted=True, user_ignored=False, friend_ignored=False)
 
-    return render_template('profile/friends.html', add_friends_form=add_friends_form, friends=friends,friend_requests=friend_requests, pending_requests=pending_requests, User=User)
+    return render_template('profile/friends.html', add_friends_form=add_friends_form, friends=friends,friend_requests=friend_requests, pending_requests=pending_requests, User=User, current_user=current_user)
 
 
 @app.route('/profile/friends/add-friend', methods=['POST'])
@@ -50,48 +50,118 @@ def add_friend():
         # check if username is valid
         if User.query.filter_by(username=username).first():
             friend = User.query.filter_by(username=username).first()
+            if not Friends.query.filter_by(user_id=current_user.id, friend_id=friend.id).first() or Friends.query.filter_by(user_id=friend.id, friend_id=current_user.id).first():
+                request = FriendRequest(
+                    current_user.id,
+                    friend.id,
+                    True,
+                    False,
+                    False,
+                    False,
+                    datetime.utcnow(),
+                    None
+                )
 
-            request = FriendRequest(
-                current_user.id,
-                friend.id,
-                True,
-                False,
-                False,
-                False,
-                datetime.utcnow(),
-                None
-            )
+                db.session.add(request)
+                db.session.flush()
 
-            db.session.add(request)
-            db.session.flush()
+                request2 = FriendRequest(
+                    friend.id,
+                    current_user.id,
+                    False,
+                    True,
+                    False,
+                    False,
+                    datetime.utcnow(),
+                    None
+                )
 
-            request2 = FriendRequest(
-                friend.id,
-                current_user.id,
-                False,
-                True,
-                False,
-                False,
-                datetime.utcnow(),
-                None
-            )
+                db.session.add(request2)
+                db.session.commit()
 
-            db.session.add(request2)
-            db.session.commit()
+    return redirect(url_for('friends'))
+
+
+@app.route('/profile/friends/accept-friend/<userId>', methods=['GET', 'POST'])
+def accept_friend(userId):
+    request = FriendRequest.query.filter_by(user_id=userId).first()
+    request2 = FriendRequest.query.filter_by(friend_id=userId).first()
+
+    if request and request2:
+        friend_id = request.friend_id
+
+        request.user_accepted = True
+        request.friend_accepted = True
+        request2.user_accepted = True
+        request2.friend_accepted = True
+
+        db.session.flush()
+
+        friend_acceptance = Friends(
+            userId,
+            friend_id,
+            request.created_on,
+            datetime.utcnow()
+        )
+
+        db.session.add(friend_acceptance)
+        db.session.flush()
+
+        friend_acceptance2 = Friends(
+            friend_id,
+            userId,
+            request.created_on,
+            datetime.utcnow()
+        )
+
+        db.session.add(friend_acceptance2)
+        db.session.commit()
+
+    return redirect(url_for('friends'))
+
+
+@app.route('/profile/friends/ignore-friend/<userId>', methods=['GET', 'POST'])
+def ignore_friend(userId):
+    request = FriendRequest.query.filter_by(user_id=userId).first()
+    request2 = FriendRequest.query.filter_by(friend_id=userId).first()
+
+    request.user_ignored = True
+    request2.friend_ignored = True
+
+    db.session.commit()
+
+    return redirect(url_for('friends'))
+
+@app.route('/profile/friends/cancel/<userId>', methods=['GET', 'POST'])
+def cancel_request(userId):
+    request = FriendRequest.query.filter_by(user_id=userId).first()
+    request2 = FriendRequest.query.filter_by(friend_id=userId).first()
+
+    db.session.delete(request)
+    db.session.delete(request2)
+    db.session.commit()
+
+    return redirect(url_for('friends'))
+
+
+@app.route('/profile/friends/delete-friend/<friendId>', methods=['GET', 'POST'])
+def delete_friend(friendId):
+    current_user = User.query.filter_by(username=session['username']).first()
+
+    friend_to_remove = Friends.query.filter_by(user_id=current_user.id, friend_id=friendId).first()
+    friend_to_remove2 = Friends.query.filter_by(user_id=friendId, friend_id=current_user.id).first()
+
+    db.session.delete(friend_to_remove)
+    db.session.delete(friend_to_remove2)
+    db.session.commit()
 
     return redirect(url_for('friends'))
 
 
 
-@app.route('/profile/friends/accept-friend', methods=['POST'])
-def accept_friend():
-    return redirect(url_for('friends'))
+@app.route('/profile/my-shares', methods=['GET', 'POST'])
+def my_shares():
+    current_user = User.query.filter_by(username=session['username']).first()
 
-
-@app.route('/profile/friends/ignore-friend', methods=['POST'])
-def ignore_friend():
-    return redirect(url_for('friends'))
-
-@app.route('/profile/friends/cancel/<requestId>', methods=['POST'])
-def cancel_request(requestId):
-    return redirect(url_for('friends'))
+    return render_template('profile/my-shares.html', current_user=current_user)
+#

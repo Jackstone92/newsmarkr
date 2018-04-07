@@ -14,7 +14,7 @@
             <img class="img-thumbnail" src="https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png" />
           </div>
           <div class="col-md-3 profile__header--name">
-            <h3>Ben Nissan</h3>
+            <h3>{{ current_user.fullname }}</h3>
           </div>
           <div class="col-md-4 offset-md-6"></div>
         </div>
@@ -30,7 +30,7 @@
               <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Shares</a>
+              <a class="nav-link" href="{{ url_for('my_shares') }}">My Shares</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Edit Profile</a>
@@ -63,7 +63,7 @@
               <div class="col-md-3">
                 <img class="img-thumbnail" src="{{ User.query.filter_by(id=request.friend_id).first().image }}" />
                 <h3 class="text-center">{{ User.query.filter_by(id=request.friend_id).first().username }}</h3>
-                <button class="btn btn-secondary" onclick="window.location.href = '{{ url_for('cancel_request', requestId=request.id) }}' ">Cancel Request</button>
+                <button class="btn btn-secondary" onclick="window.location.href = '{{ url_for('cancel_request', userId=current_user.id) }}' ">Cancel Request</button>
               </div>
             {% endfor %}
           </div>
@@ -78,16 +78,16 @@
           </div>
           {% for friend_request in friend_requests %}
             <div class="col-md-12">
-              <img class="img-thumbnail profile__friend-requests--img" src="https://dummyimage.com/100x100/000/fff" />
-              <h3>Todd Barker</h3>
-              <button class="btn btn-success">Accept</button>
-              <button class="btn btn-secondary">Ignore</button>
+              <img class="img-thumbnail profile__friend-requests--img" src="{{ User.query.filter_by(id=friend_request.friend_id).first().image }}" />
+              <h3>{{ User.query.filter_by(id=friend_request.friend_id).first().fullname }}</h3>
+              <button class="btn btn-success" onclick="window.location.href = '{{ url_for('accept_friend', userId=current_user.id) }}'">Accept</button>
+              <button class="btn btn-secondary" onclick="window.location.href = '{{ url_for('ignore_friend', userId=current_user.id) }}'">Ignore</button>
             </div>
           {% endfor %}
         {% endif %}
       </div>
 
-      <br/><br/><br/><br/>
+      <br/><br/><hr/><br/><br/>
 
       <div class="row profile__friend-requests--list">
         <!-- friends list -->
@@ -98,8 +98,8 @@
         {% if friends.count() > 0 %}
           {% for friend in friends %}
             <div class="col-md-3">
-              <img class="img-thumbnail" src="https://dummyimage.com/250x250/000/fff" />
-              <h3 class="text-center">Friend</h3>
+              <img class="img-thumbnail" src="{{ User.query.filter_by(id=friend.id).first().image }}" />
+              <h3 class="text-center">{{ User.query.filter_by(id=friend.id).first().fullname }}</h3>
             </div>
           {% endfor %}
         {% else %}

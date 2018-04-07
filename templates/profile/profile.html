@@ -14,7 +14,7 @@
             <img class="img-thumbnail" src="https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png" />
           </div>
           <div class="col-md-3 profile__header--name">
-            <h3>Ben Nissan</h3>
+            <h3>{{ current_user.fullname }}</h3>
           </div>
           <div class="col-md-4 offset-md-6"></div>
         </div>
@@ -30,7 +30,7 @@
               <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Shares</a>
+              <a class="nav-link" href="{{ url_for('my_shares') }}">My Shares</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Edit Profile</a>
@@ -41,81 +41,84 @@
 
       <br/>
 
-      {% if posts %}
-      {% for post in posts %}
-        <div class="row social__timeline">
+      {% if posts.count() > 0 %}
+        {% for post in posts %}
+          <div class="row social__timeline">
 
-          <div class="col-md-7 social__timeline--article" onclick="window.location.href='{{ url_for('show_social_article', postId=post.id) }}'">
-            <div class="card">
-              <img class="card-img-top" src="{{ post.image }}" alt="Card image cap" />
-              <div class="card-body">
-                <h4 class="card-title">{{ post.title }}</h4>
-                <p class="card-text">{{ post.description }}</p>
-              </div>
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item text-center">Source: {{ post.source }}</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="col-md-5 social__timeline--comments">
-
-            <div class="card post boxshadow">
-              <div class="card-body">
-                <h4 class="card-title">Posted by {{ User.query.filter_by(id=post.user_id).first().username }} <span class="social__timeline--postdate"> on {{ post.posted_on }}</span></h4>
-                <p>{{ post.post }}</p>
-                <hr/>
-                <div class="row">
-                  <div class="col-md-1"></div>
-                  <div class="col-md-1">
-                    <p>{{ post.num_likes }}</p>
-                  </div>
-                  <form class="col-md-4" method="POST" action="{{ url_for('increment_post_like', postId=post.id) }}">
-                    <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-up"></i> Like</button>
-                  </form>
-                  <div class="col-md-1">
-                    <p>{{ post.num_dislikes }}</p>
-                  </div>
-                  <form class="col-md-4" method="POST" action="{{ url_for('increment_post_dislike', postId=post.id) }}">
-                    <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-down"></i> Dislike</button>
-                  </form>
+            <div class="col-md-7 social__timeline--article" onclick="window.location.href='{{ url_for('show_social_article', postId=post.id) }}'">
+              <div class="card">
+                <img class="card-img-top" src="{{ post.image }}" alt="Card image cap" />
+                <div class="card-body">
+                  <h4 class="card-title">{{ post.title }}</h4>
+                  <p class="card-text">{{ post.description }}</p>
                 </div>
-
-                <hr/>
-                <div class="social__timeline--comment-wrapper">
-                {% for comment in Comment.query.filter_by(post_id=post.id) %}
-                  <div class="comment">
-                    <div class="comment__wrapper">
-                      <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().image }}" alt="profile picture" />
-                      <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().username }}</p>
-                    </div>
-                    <div class="comment__wrapper--comment">
-                      <p>{{ comment.comment }}</p>
-                    </div>
-                  </div>
-                {% endfor %}
-                </div>
-              </div>
-
-              <div class="comment__comment-entry">
-                <hr/>
-                {% from "_formhelpers.html" import render_field %}
-                <form class="form-inline" method="POST" action="{{ url_for('comment', postId=post.id) }}">
-                  {{ comment_form.hidden_tag() }}
-                  <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.image }}" />
-                  {{ render_field(comment_form.comment, class='form-control', rows='2', columns='3', placeholder="Write a comment...", required=True) }}
-                  <button class="btn btn-primary" type="submit">Post</button>
-                </form>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item text-center">Source: {{ post.source }}</li>
+                </ul>
               </div>
             </div>
 
+            <div class="col-md-5 social__timeline--comments">
+
+              <div class="card post boxshadow">
+                <div class="card-body">
+                  <h4 class="card-title">Posted by {{ User.query.filter_by(id=post.user_id).first().username }} <span class="social__timeline--postdate"> on {{ post.posted_on }}</span></h4>
+                  <p>{{ post.post }}</p>
+                  <hr/>
+                  <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-1">
+                      <p>{{ post.num_likes }}</p>
+                    </div>
+                    <form class="col-md-4" method="POST" action="{{ url_for('increment_post_like', postId=post.id) }}">
+                      <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-up"></i> Like</button>
+                    </form>
+                    <div class="col-md-1">
+                      <p>{{ post.num_dislikes }}</p>
+                    </div>
+                    <form class="col-md-4" method="POST" action="{{ url_for('increment_post_dislike', postId=post.id) }}">
+                      <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-down"></i> Dislike</button>
+                    </form>
+                  </div>
+
+                  <hr/>
+                  <div class="social__timeline--comment-wrapper">
+                  {% for comment in Comment.query.filter_by(post_id=post.id) %}
+                    <div class="comment">
+                      <div class="comment__wrapper">
+                        <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().image }}" alt="profile picture" />
+                        <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().username }}</p>
+                      </div>
+                      <div class="comment__wrapper--comment">
+                        <p>{{ comment.comment }}</p>
+                      </div>
+                    </div>
+                  {% endfor %}
+                  </div>
+                </div>
+
+                <div class="comment__comment-entry">
+                  <hr/>
+                  {% from "_formhelpers.html" import render_field %}
+                  <form class="form-inline" method="POST" action="{{ url_for('comment', postId=post.id) }}">
+                    {{ comment_form.hidden_tag() }}
+                    <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.image }}" />
+                    {{ render_field(comment_form.comment, class='form-control', rows='2', columns='3', placeholder="Write a comment...", required=True) }}
+                    <button class="btn btn-primary" type="submit">Post</button>
+                  </form>
+                </div>
+              </div>
+
+            </div>
           </div>
+
+          <br/><hr/>
+        {% endfor %}
+      {% else %}
+        <div class="col-md-12">
+          <h4 class="text-center">You don't seem to have any posts... Why not <a href="{{ url_for('social') }}">make a post!</a></h4>
         </div>
-
-        <br/><hr/>
-      {% endfor %}
       {% endif %}
-
     </div>
   </div>
 </div>

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}My Shares{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="container profile">
+
+      <div class="row profile__header">
+        <div class="col-md-12 profile__header--cover">
+          <div class="col-md-2 offset-md-2"></div>
+          <div class="col-md-3 profile__header--imgwrapper">
+            <img class="img-thumbnail" src="https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png" />
+          </div>
+          <div class="col-md-3 profile__header--name">
+            <h3>{{ current_user.fullname }}</h3>
+          </div>
+          <div class="col-md-4 offset-md-6"></div>
+        </div>
+      </div>
+
+      <div class="row profile__nav">
+        <div class="col-md-12">
+          <ul class="nav nav-fill">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('profile') }}">Timeline</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
+            </li>
+            <li class="nav-item active-nav-item">
+              <a class="nav-link" href="{{ url_for('my_shares') }}">My Shares</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Edit Profile</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <br/>
+
+      <div class="row">
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
