@@ -75,6 +75,10 @@ def signup():
             form.email.data,
             form.username.data,
             hashed_password,
+            str(url_for('static', filename='images/profile_picture.png')),
+            None,
+            str(url_for('static', filename='images/newspaper.jpg')),
+            None,
             True
         )
         # add to database

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}My Shares{% endblock %}
+{% block title %}About{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -8,10 +8,18 @@
     <div class="container profile">
 
       <div class="row profile__header">
-        <div class="col-md-12 profile__header--cover">
+        {% if current_user.cover_photo_upload %}
+        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ url_for('static', filename='uploads/images/' + current_user.cover_photo_upload) }}')">
+        {% else %}
+        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ current_user.cover_photo }}')">
+        {% endif %}
           <div class="col-md-2 offset-md-2"></div>
           <div class="col-md-3 profile__header--imgwrapper">
-            <img class="img-thumbnail" src="https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png" />
+            {% if current_user.profile_picture_upload %}
+              <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
+            {% else %}
+              <img class="img-thumbnail" src="{{ current_user.profile_picture }}" />
+            {% endif %}
           </div>
           <div class="col-md-3 profile__header--name">
             <h3>{{ current_user.fullname }}</h3>
@@ -26,23 +34,20 @@
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('profile') }}">Timeline</a>
             </li>
+            <li class="nav-item active-nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">About</a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
             </li>
-            <li class="nav-item active-nav-item">
-              <a class="nav-link" href="{{ url_for('my_shares') }}">My Shares</a>
-            </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Edit Profile</a>
+              <a class="nav-link" href="{{ url_for('edit_profile') }}">Edit Profile</a>
             </li>
           </ul>
         </div>
       </div>
 
       <br/>
-
-      <div class="row">
-      </div>
 
     </div>
   </div>

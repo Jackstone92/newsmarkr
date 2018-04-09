@@ -8,10 +8,18 @@
     <div class="container profile">
 
       <div class="row profile__header">
-        <div class="col-md-12 profile__header--cover">
+        {% if current_user.cover_photo_upload %}
+        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ url_for('static', filename='uploads/images/' + current_user.cover_photo_upload) }}')">
+        {% else %}
+        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ current_user.cover_photo }}')">
+        {% endif %}
           <div class="col-md-2 offset-md-2"></div>
           <div class="col-md-3 profile__header--imgwrapper">
-            <img class="img-thumbnail" src="https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png" />
+            {% if current_user.profile_picture_upload %}
+              <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
+            {% else %}
+              <img class="img-thumbnail" src="{{ current_user.profile_picture }}" />
+            {% endif %}
           </div>
           <div class="col-md-3 profile__header--name">
             <h3>{{ current_user.fullname }}</h3>
@@ -27,13 +35,13 @@
               <a class="nav-link" href="{{ url_for('profile') }}">Timeline</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">About</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('my_shares') }}">My Shares</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Edit Profile</a>
+              <a class="nav-link" href="{{ url_for('edit_profile') }}">Edit Profile</a>
             </li>
           </ul>
         </div>
@@ -41,7 +49,19 @@
 
       <br/>
 
-      {% if posts.count() > 0 %}
+      <!-- posts filter nav -->
+      <div class="row">
+        <div class="offset-md-2"></div>
+        <div class="col-md-4">
+          <button class="btn btn-secondary col-md-12 active" onclick="window.location.href = '{{ url_for('profile', posts='All Posts') }}'">All Posts</button>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-secondary col-md-12" onclick="window.location.href = '{{ url_for('profile', posts='Just My Posts') }}'">Just My Posts</button>
+        </div>
+        <div class="offset-md-2"></div>
+      </div>
+
+      {% if posts|length > 0 %}
         {% for post in posts %}
           <div class="row social__timeline">
 
@@ -86,7 +106,11 @@
                   {% for comment in Comment.query.filter_by(post_id=post.id) %}
                     <div class="comment">
                       <div class="comment__wrapper">
-                        <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().image }}" alt="profile picture" />
+                        {% if User.query.filter_by(id=comment.user_id).first().profile_picture_upload %}
+                        <img class="img-thumbnail comment__wrapper--img" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" alt="profile picture" />
+                        {% else %}
+                        <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().profile_picture }}" alt="profile picture" />
+                        {% endif %}
                         <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().username }}</p>
                       </div>
                       <div class="comment__wrapper--comment">
@@ -102,7 +126,11 @@
                   {% from "_formhelpers.html" import render_field %}
                   <form class="form-inline" method="POST" action="{{ url_for('comment', postId=post.id) }}">
                     {{ comment_form.hidden_tag() }}
-                    <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.image }}" />
+                    {% if current_user.profile_picture_upload %}
+                    <img class="img-thumbnail comment__wrapper--img" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
+                    {% else %}
+                    <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.profile_picture }}" />
+                    {% endif %}
                     {{ render_field(comment_form.comment, class='form-control', rows='2', columns='3', placeholder="Write a comment...", required=True) }}
                     <button class="btn btn-primary" type="submit">Post</button>
                   </form>
@@ -115,8 +143,9 @@
           <br/><hr/>
         {% endfor %}
       {% else %}
+        <br/>
         <div class="col-md-12">
-          <h4 class="text-center">You don't seem to have any posts... Why not <a href="{{ url_for('social') }}">make a post!</a></h4>
+          <p class="text-center">You don't seem to have any posts... Why not <a href="{{ url_for('social') }}">make a post!</a></p>
         </div>
       {% endif %}
     </div>

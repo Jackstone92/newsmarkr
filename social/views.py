@@ -12,6 +12,7 @@ from flask_newsmarkr import db
 from user.models import User
 from bookmark.models import Collection, Bookmark, Category
 from social.models import Post, Comment
+from profile.models import Friends
 
 from social.form import PostForm, CommentForm
 
@@ -26,14 +27,29 @@ def social():
     form = PostForm()
     comment_form = CommentForm()
     share_url = None
+    friends_posts = []
+    both = []
+    combined_posts = []
 
     if request.args.get('share_url'):
         share_url = request.args.get('share_url')
 
     posts = Post.query.filter_by(user_id=current_user.id).order_by('id desc')
+    for friend in Friends.query.filter_by(friend_id=current_user.id):
+        friends_posts = Post.query.filter_by(user_id=friend.user_id).order_by('id desc')
+
+    # list comprehension to combine current_user posts and friends_posts posts
+    if posts and friends_posts:
+        both.append(posts)
+        both.append(friends_posts)
+        combined_posts = [item for sublist in both for item in sublist]
+        combined_posts = sorted(combined_posts, key=lambda post: post.id, reverse=True)
+    else:
+        combined_posts = [item for item in posts]
+
     articles = Bookmark.query.filter_by(user_id=current_user.id)
 
-    return render_template('social/social.html', share_url=share_url, form=form, comment_form=comment_form, posts=posts, articles=articles, current_user=current_user, User=User, Comment=Comment)
+    return render_template('social/social.html', share_url=share_url, form=form, comment_form=comment_form, posts=combined_posts, articles=articles, current_user=current_user, User=User, Comment=Comment)
 
 
 @app.route('/social-feed/<postId>', methods=['GET', 'POST'])

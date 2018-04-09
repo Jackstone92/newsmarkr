@@ -48,7 +48,11 @@
           {% for comment in Comment.query.filter_by(post_id=post.id) %}
             <div class="comment">
               <div class="comment__wrapper">
-                <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().image }}" alt="profile picture" />
+                {% if User.query.filter_by(id=comment.user_id).first().profile_picture_upload %}
+                <img class="img-thumbnail comment__wrapper--img" src="{{ url_for('static', filename='uploads/images/' + User.query.filter_by(id=comment.user_id).first().profile_picture_upload) }}" alt="profile picture" />
+                {% else %}
+                <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().profile_picture }}" alt="profile picture" />
+                {% endif %}
                 <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().username }}</p>
               </div>
               <div class="comment__wrapper--comment">
@@ -64,8 +68,11 @@
           {% from "_formhelpers.html" import render_field %}
           <form class="form-inline" method="POST" action="{{ url_for('comment', postId=post.id, current_page='View') }}">
             {{ comment_form.hidden_tag() }}
-            <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.image }}" />
-            <!-- <textarea class="form-control" rows="2" columns="3" placeholder="Write a comment..." required></textarea> -->
+            {% if current_user.profile_picture_upload %}
+            <img class="img-thumbnail comment__wrapper--img" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
+            {% else %}
+            <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.profile_picture }}" />
+            {% endif %}
             {{ render_field(comment_form.comment, class='form-control', rows='2', columns='3', placeholder="Write a comment...", required=True) }}
             <button class="btn btn-primary" type="submit">Post</button>
           </form>

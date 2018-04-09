@@ -5,7 +5,7 @@ class Friends(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     friend_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    created_on = db.Column(db.Date)
+    created_on = db.Column(db.String(256))
     accepted_on = db.Column(db.Date)
 
     def __init__(self, user_id, friend_id, created_on, accepted_on):

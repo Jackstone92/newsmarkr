@@ -1,15 +1,20 @@
 from flask_newsmarkr import app
 from flask import render_template, redirect, flash, url_for, session, abort, request
 
+import os
+from settings import UPLOADED_IMAGES_DEST
+
 from datetime import datetime
 
-from flask_newsmarkr import db
+from flask_newsmarkr import db, uploaded_images
 
 from social.models import Post, Comment
 from social.form import CommentForm
 from profile.models import Friends, FriendRequest
-from profile.form import AddFriendsForm
+from profile.form import AddFriendsForm, EditProfilePicture, EditCoverPhoto
 from user.models import User
+
+# TODO: add login_required decorators to all other views
 
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -17,27 +22,61 @@ from user.models import User
 def profile():
     # timeline view
     current_user = User.query.filter_by(username=session['username']).first()
-
-    friends = Friends.query.filter_by(user_id=current_user.id)
-    friends_posts = []
-    for friend in friends:
-        friends_posts.append(Post.query.filter_by(user_id=friend.friend_id))
-
-    posts = Post.query.filter_by(user_id=current_user.id).order_by('id desc')
     comment_form = CommentForm()
+    friends_posts = []
+    both = []
+    combined_posts = []
 
-    return render_template('profile/profile.html', comment_form=comment_form, posts=posts, Comment=Comment, User=User, current_user=current_user, Friends=Friends)
+    # if 'my posts' selected
+    if request.args.get('posts') == 'Just My Posts':
+        # posts by current_user only
+        posts = Post.query.filter_by(user_id=current_user.id).order_by('id desc')
+
+        return render_template('profile/my-posts.html', comment_form=comment_form, current_user=current_user, posts=posts, User=User, Comment=Comment)
+
+    else:
+        # else display 'my posts' and friends' posts
+        posts = Post.query.filter_by(user_id=current_user.id).order_by('id desc')
+        for friend in Friends.query.filter_by(friend_id=current_user.id):
+            friends_posts = Post.query.filter_by(user_id=friend.user_id).order_by('id desc')
+
+        # list comprehension to combine current_user posts and friends_posts posts
+        if posts and friends_posts:
+            both.append(posts)
+            both.append(friends_posts)
+            combined_posts = [item for sublist in both for item in sublist]
+            combined_posts = sorted(combined_posts, key=lambda post: post.id, reverse=True)
+        else:
+            combined_posts = [item for item in posts]
+
+        return render_template('profile/timeline.html', comment_form=comment_form, posts=combined_posts, Comment=Comment, User=User, current_user=current_user, Friends=Friends)
+
+
+@app.route('/profile/about', methods=['GET', 'POST'])
+def about():
+    # about view
+    current_user = User.query.filter_by(username=session['username']).first()
+
+    return render_template('profile/about.html', current_user=current_user)
 
 
 @app.route('/profile/friends', methods=['GET', 'POST'])
 def friends():
+    # friends view
     add_friends_form = AddFriendsForm()
     current_user = User.query.filter_by(username=session['username']).first()
     friends = Friends.query.filter_by(user_id=current_user.id)
     pending_requests = FriendRequest.query.filter_by(user_id=current_user.id, user_accepted=True, friend_accepted=False, user_ignored=False, friend_ignored=False)
     friend_requests = FriendRequest.query.filter_by(user_id=current_user.id, user_accepted=False, friend_accepted=True, user_ignored=False, friend_ignored=False)
 
-    return render_template('profile/friends.html', add_friends_form=add_friends_form, friends=friends,friend_requests=friend_requests, pending_requests=pending_requests, User=User, current_user=current_user)
+    edit_status_friends = None
+    if 'edit_status_friends' in session:
+        edit_status_friends = session['edit_status_friends']
+    else:
+        session['edit_status_friends'] = False
+        edit_status_friends = session['edit_status_friends']
+
+    return render_template('profile/friends.html', add_friends_form=add_friends_form, friends=friends,friend_requests=friend_requests, pending_requests=pending_requests, User=User, current_user=current_user, edit_status_friends=edit_status_friends)
 
 
 @app.route('/profile/friends/add-friend', methods=['POST'])
@@ -50,118 +89,220 @@ def add_friend():
         # check if username is valid
         if User.query.filter_by(username=username).first():
             friend = User.query.filter_by(username=username).first()
-            if not Friends.query.filter_by(user_id=current_user.id, friend_id=friend.id).first() or Friends.query.filter_by(user_id=friend.id, friend_id=current_user.id).first():
-                request = FriendRequest(
-                    current_user.id,
-                    friend.id,
-                    True,
-                    False,
-                    False,
-                    False,
-                    datetime.utcnow(),
-                    None
-                )
+            # check if already friend
+            if not Friends.query.filter_by(user_id=current_user.id, friend_id=friend.id).first() and not Friends.query.filter_by(user_id=friend.id, friend_id=current_user.id).first():
+                # check request has not already been made
+                if not FriendRequest.query.filter_by(user_id=current_user.id, friend_id=friend.id).first() and not FriendRequest.query.filter_by(user_id=friend.id, friend_id=current_user.id).first():
+                    request = FriendRequest(
+                        current_user.id,
+                        friend.id,
+                        True,
+                        False,
+                        False,
+                        False,
+                        datetime.utcnow(),
+                        None
+                    )
 
-                db.session.add(request)
-                db.session.flush()
+                    db.session.add(request)
+                    db.session.flush()
 
-                request2 = FriendRequest(
-                    friend.id,
-                    current_user.id,
-                    False,
-                    True,
-                    False,
-                    False,
-                    datetime.utcnow(),
-                    None
-                )
+                    request2 = FriendRequest(
+                        friend.id,
+                        current_user.id,
+                        False,
+                        True,
+                        False,
+                        False,
+                        datetime.utcnow(),
+                        None
+                    )
 
-                db.session.add(request2)
-                db.session.commit()
+                    db.session.add(request2)
+                    db.session.commit()
 
     return redirect(url_for('friends'))
 
 
-@app.route('/profile/friends/accept-friend/<userId>', methods=['GET', 'POST'])
-def accept_friend(userId):
-    request = FriendRequest.query.filter_by(user_id=userId).first()
-    request2 = FriendRequest.query.filter_by(friend_id=userId).first()
+@app.route('/profile/friends/accept-friend/<userId>/<friendId>', methods=['POST'])
+def accept_friend(userId, friendId):
+    request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId).first()
+    request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId).first()
 
     if request and request2:
-        friend_id = request.friend_id
-
         request.user_accepted = True
         request.friend_accepted = True
+        request.accepted_on = datetime.utcnow()
         request2.user_accepted = True
         request2.friend_accepted = True
+        request2.accepted_on = datetime.utcnow()
 
         db.session.flush()
 
         friend_acceptance = Friends(
             userId,
-            friend_id,
+            friendId,
             request.created_on,
             datetime.utcnow()
         )
 
-        db.session.add(friend_acceptance)
-        db.session.flush()
-
         friend_acceptance2 = Friends(
-            friend_id,
+            friendId,
             userId,
             request.created_on,
             datetime.utcnow()
         )
 
+        db.session.add(friend_acceptance)
         db.session.add(friend_acceptance2)
         db.session.commit()
 
     return redirect(url_for('friends'))
 
 
-@app.route('/profile/friends/ignore-friend/<userId>', methods=['GET', 'POST'])
-def ignore_friend(userId):
-    request = FriendRequest.query.filter_by(user_id=userId).first()
-    request2 = FriendRequest.query.filter_by(friend_id=userId).first()
+@app.route('/profile/friends/ignore-friend/<userId>/<friendId>', methods=['POST'])
+def ignore_friend(userId, friendId):
+    request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId).first()
+    request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId).first()
 
-    request.user_ignored = True
-    request2.friend_ignored = True
+    if request.user_ignored == False and request2.friend_ignored == False:
+        request.user_ignored = True
+        request2.friend_ignored = True
+
+        db.session.commit()
+
+    return redirect(url_for('friends'))
+
+@app.route('/profile/friends/cancel/<userId>/<friendId>', methods=['POST'])
+def cancel_request(userId, friendId):
+    request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId)
+    request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId)
+
+    for req in request:
+        db.session.delete(req)
+
+    db.session.flush()
+
+    for request in request2:
+        db.session.delete(request)
 
     db.session.commit()
 
     return redirect(url_for('friends'))
 
-@app.route('/profile/friends/cancel/<userId>', methods=['GET', 'POST'])
-def cancel_request(userId):
-    request = FriendRequest.query.filter_by(user_id=userId).first()
-    request2 = FriendRequest.query.filter_by(friend_id=userId).first()
 
-    db.session.delete(request)
-    db.session.delete(request2)
+@app.route('/profile/friends/change-edit-status', methods=['POST'])
+def change_edit_status_friends():
+    """ Collection method to change edit status """
+    if 'edit_status_friends' in session:
+        edit_status_friends = session['edit_status_friends']
+        session['edit_status_friends'] = not edit_status_friends
+    else:
+        session['edit_status_friends'] = False
+
+    return redirect(url_for('friends'))
+
+
+@app.route('/profile/friends/delete-friend/<userId>/<friendId>', methods=['POST'])
+def delete_friend(userId, friendId):
+    # remove original request
+    request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId)
+    request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId)
+
+    for req in request:
+        db.session.delete(req)
+
+    db.session.flush()
+
+    for request in request2:
+        db.session.delete(request)
+
+    db.session.flush()
+
+    # delete friend
+    friend_to_remove = Friends.query.filter_by(user_id=userId, friend_id=friendId)
+    friend_to_remove2 = Friends.query.filter_by(user_id=friendId, friend_id=userId)
+
+    for req in friend_to_remove:
+        db.session.delete(req)
+
+    db.session.flush()
+
+    for req in friend_to_remove2:
+        db.session.delete(req)
+
     db.session.commit()
 
     return redirect(url_for('friends'))
 
 
-@app.route('/profile/friends/delete-friend/<friendId>', methods=['GET', 'POST'])
-def delete_friend(friendId):
+@app.route('/profile/edit-profile', methods=['GET', 'POST'])
+def edit_profile():
+    # edit profile view
     current_user = User.query.filter_by(username=session['username']).first()
+    edit_cover_photo_form = EditCoverPhoto()
+    edit_profile_picture_form = EditProfilePicture()
 
-    friend_to_remove = Friends.query.filter_by(user_id=current_user.id, friend_id=friendId).first()
-    friend_to_remove2 = Friends.query.filter_by(user_id=friendId, friend_id=current_user.id).first()
-
-    db.session.delete(friend_to_remove)
-    db.session.delete(friend_to_remove2)
-    db.session.commit()
-
-    return redirect(url_for('friends'))
+    return render_template('profile/edit-profile.html', current_user=current_user, edit_cover_photo_form=edit_cover_photo_form, edit_profile_picture_form=edit_profile_picture_form)
 
 
+@app.route('/profile/edit-profile/edit-profile-picture', methods=['POST'])
+def edit_profile_picture():
+    edit_profile_picture_form = EditProfilePicture()
 
-@app.route('/profile/my-shares', methods=['GET', 'POST'])
-def my_shares():
-    current_user = User.query.filter_by(username=session['username']).first()
+    if edit_profile_picture_form.validate_on_submit():
+        filename = None
+        profile_picture = edit_profile_picture_form.profile_picture.data
+        profile_picture_upload = edit_profile_picture_form.profile_picture_upload.data
 
-    return render_template('profile/my-shares.html', current_user=current_user)
-#
+        try:
+            filename = uploaded_images.save(profile_picture_upload)
+        except:
+            flash('The image was not uploaded')
+
+        if profile_picture or profile_picture_upload:
+            current_user = User.query.filter_by(username=session['username']).first()
+            # if image, use that rather than filename
+            if profile_picture and current_user.profile_picture != profile_picture:
+                current_user.profile_picture_upload = None
+                current_user.profile_picture = profile_picture
+
+            # if filename, use that rather than image
+            if filename and current_user.profile_picture_upload != filename:
+                current_user.profile_picture = None
+                current_user.profile_picture_upload = filename
+
+            db.session.commit()
+
+    return redirect(url_for('edit_profile'))
+
+
+@app.route('/profile/edit-profile/edit-cover-photo', methods=['POST'])
+def edit_cover_photo():
+    edit_cover_photo_form = EditCoverPhoto()
+
+    if edit_cover_photo_form.validate_on_submit():
+        filename = None
+        cover_photo = edit_cover_photo_form.cover_photo.data
+        cover_photo_upload = edit_cover_photo_form.cover_photo_upload.data
+
+        try:
+            filename = uploaded_images.save(cover_photo_upload)
+        except:
+            flash('The image was not uploaded')
+
+        if cover_photo or cover_photo_upload:
+            current_user = User.query.filter_by(username=session['username']).first()
+            # if image, use that rather than filename
+            if cover_photo and current_user.cover_photo != cover_photo:
+                current_user.cover_photo_upload = None
+                current_user.cover_photo = cover_photo
+
+            # if filename, use that rather than image
+            if filename and current_user.cover_photo_upload != filename:
+                current_user.cover_photo = None
+                current_user.cover_photo_upload = filename
+
+            db.session.commit()
+
+    return redirect(url_for('edit_profile'))

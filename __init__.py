@@ -9,8 +9,6 @@ from flask_migrate import Migrate
 from flaskext.markdown import Markdown
 # import flask-uploads
 from flask_uploads import UploadSet, configure_uploads, IMAGES
-# import flask-socketIO
-from flask_socketio import SocketIO, emit
 
 
 app = Flask(__name__)
@@ -30,9 +28,6 @@ Markdown(app)
 # flask_uploads
 uploaded_images = UploadSet('images', IMAGES)
 configure_uploads(app, uploaded_images)
-
-# flask-socketIO
-socketio = SocketIO(app)
 
 
 # import all views (controllers)

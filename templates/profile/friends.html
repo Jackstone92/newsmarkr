@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Timeline{% endblock %}
+{% block title %}Friends{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -8,10 +8,18 @@
     <div class="container profile">
 
       <div class="row profile__header">
-        <div class="col-md-12 profile__header--cover">
+        {% if current_user.cover_photo_upload %}
+        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ url_for('static', filename='uploads/images/' + current_user.cover_photo_upload) }}')">
+        {% else %}
+        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ current_user.cover_photo }}')">
+        {% endif %}
           <div class="col-md-2 offset-md-2"></div>
           <div class="col-md-3 profile__header--imgwrapper">
-            <img class="img-thumbnail" src="https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png" />
+            {% if current_user.profile_picture_upload %}
+              <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
+            {% else %}
+              <img class="img-thumbnail" src="{{ current_user.profile_picture }}" />
+            {% endif %}
           </div>
           <div class="col-md-3 profile__header--name">
             <h3>{{ current_user.fullname }}</h3>
@@ -26,14 +34,14 @@
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('profile') }}">Timeline</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">About</a>
+            </li>
             <li class="nav-item active-nav-item">
               <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('my_shares') }}">My Shares</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Edit Profile</a>
+              <a class="nav-link" href="{{ url_for('edit_profile') }}">Edit Profile</a>
             </li>
           </ul>
         </div>
@@ -49,57 +57,105 @@
           <form class="form-inline justify-content-center" method="POST" action="{{ url_for('add_friend') }}">
             {{ add_friends_form.hidden_tag() }}
             {{ render_field(add_friends_form.username, class='form-control', placeholder="Enter a username...", required=True) }}
-            <button type="submit" class="btn btn-secondary">Add Friend</button>
+            <button type="submit" class="btn btn-success">Add Friend</button>
           </form>
         </div>
 
         {% if pending_requests.count() > 0 %}
-          <br/><br/><br/><br/>
-
           <div class="col-md-12">
+            <br/><br/><hr/><br/>
             <h3>Pending Requests</h3>
-
-            {% for request in pending_requests %}
-              <div class="col-md-3">
-                <img class="img-thumbnail" src="{{ User.query.filter_by(id=request.friend_id).first().image }}" />
-                <h3 class="text-center">{{ User.query.filter_by(id=request.friend_id).first().username }}</h3>
-                <button class="btn btn-secondary" onclick="window.location.href = '{{ url_for('cancel_request', userId=current_user.id) }}' ">Cancel Request</button>
-              </div>
-            {% endfor %}
+            <div class="row">
+              {% for request in pending_requests %}
+                <div class="card col-md-3">
+                  {% if User.query.filter_by(id=request.friend_id).first().profile_picture_upload %}
+                  <img class="card-img-top" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=request.friend_id).first().profile_picture_upload) }}" />
+                  {% else %}
+                  <img class="card-img-top" src="{{ User.query.filter_by(id=request.friend_id).first().profile_picture }}" />
+                  {% endif %}
+                  <div class="card-body text-center">
+                    <h3 class="text-center">{{ User.query.filter_by(id=request.friend_id).first().username }}</h3>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      <form action="{{ url_for('cancel_request', userId=current_user.id, friendId=request.friend_id) }}" method="POST" class="col-md-12">
+                        <button class="btn btn-secondary col-md-12" type="submit">Cancel Request</button>
+                      </form>
+                    </li>
+                  </ul>
+                </div>
+              {% endfor %}
+            </div>
           </div>
         {% endif %}
 
         <!-- friend requests -->
         {% if friend_requests.count() > 0 %}
-          <br/><br/><br/><br/>
-
           <div class="col-md-12">
+            <br/><br/><hr/><br/>
             <h3>Friend Requests</h3>
           </div>
           {% for friend_request in friend_requests %}
-            <div class="col-md-12">
-              <img class="img-thumbnail profile__friend-requests--img" src="{{ User.query.filter_by(id=friend_request.friend_id).first().image }}" />
-              <h3>{{ User.query.filter_by(id=friend_request.friend_id).first().fullname }}</h3>
-              <button class="btn btn-success" onclick="window.location.href = '{{ url_for('accept_friend', userId=current_user.id) }}'">Accept</button>
-              <button class="btn btn-secondary" onclick="window.location.href = '{{ url_for('ignore_friend', userId=current_user.id) }}'">Ignore</button>
+            <div class="card col-md-3">
+              {% if User.query.filter_by(id=friend_request.friend_id).first().profile_picture_upload %}
+              <img class="card-img-top profile__friend-requests--img" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend_request.friend_id).first().profile_picture_upload) }}" />
+              {% else %}
+              <img class="card-img-top profile__friend-requests--img" src="{{ User.query.filter_by(id=friend_request.friend_id).first().profile_picture }}" />
+              {% endif %}
+              <div class="card-body text-center">
+                <h3>{{ User.query.filter_by(id=friend_request.friend_id).first().fullname }}</h3>
+              </div>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                  <form action="{{ url_for('accept_friend', userId=current_user.id, friendId=friend_request.friend_id) }}" method="POST" class="col-md-12">
+                    <button class="btn btn-success col-md-12" type="submit">Accept</button>
+                  </form>
+                </li>
+                <li class="list-group-item">
+                  <form action="{{ url_for('ignore_friend', userId=current_user.id, friendId=friend_request.friend_id) }}" method="POST" class="col-md-12">
+                    <button class="btn btn-secondary col-md-12" type="submit">Ignore</button>
+                  </form>
+                </li>
+              </ul>
             </div>
           {% endfor %}
         {% endif %}
       </div>
 
-      <br/><br/><hr/><br/><br/>
-
       <div class="row profile__friend-requests--list">
         <!-- friends list -->
         <div class="col-md-12">
-          <h3>Friends</h3>
+          <br/><br/><hr/><br/>
+          <div class="row">
+            <div class="col-md-10">
+              <h3>Friends</h3>
+            </div>
+            <div class="col-md-2">
+              <form action="{{ url_for('change_edit_status_friends') }}" method="POST" class="col-md-12">
+                {% if edit_status_friends == True %}
+                <button class="btn btn-success">Done</button>
+                {% else %}
+                <button class="btn btn-warning" type="submit">Edit</button>
+                {% endif %}
+              </form>
+            </div>
+          </div>
         </div>
 
         {% if friends.count() > 0 %}
           {% for friend in friends %}
             <div class="col-md-3">
-              <img class="img-thumbnail" src="{{ User.query.filter_by(id=friend.id).first().image }}" />
-              <h3 class="text-center">{{ User.query.filter_by(id=friend.id).first().fullname }}</h3>
+              {% if User.query.filter_by(id=friend.friend_id).profile_picture_upload %}
+              <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend.user_id).first().profile_picture_upload) }}" />
+              {% else %}
+              <img class="img-thumbnail" src="{{ User.query.filter_by(id=friend.friend_id).first().profile_picture }}" />
+              {% endif %}
+              <h3 class="text-center">{{ User.query.filter_by(id=friend.friend_id).first().fullname }}</h3>
+              {% if edit_status_friends == True %}
+              <form action="{{ url_for('delete_friend', userId=current_user.id, friendId=friend.friend_id) }}" method="POST" class="col-md-12">
+                <button class="btn btn-danger col-md-12" type="submit">Delete Friend</button>
+              </form>
+              {% endif %}
             </div>
           {% endfor %}
         {% else %}

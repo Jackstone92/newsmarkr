@@ -34,6 +34,18 @@ manager = Manager(app)
     # then 'python manage.py db upgrade'
         # or change database to previous state: 'python manage.py db downgrade'
 
+
+# shell commands to reset db
+    # from flask_newsmarkr import db
+    # db.session.commit()
+    # db.session.drop_all()
+    # from articlepool.models import *
+    # from bookmark.models import *
+    # from profile.models import *
+    # from social.models import *
+    # from user.models import *
+    # db.create_all()
+
 manager.add_command('db', MigrateCommand)
 # add 'runserver' command to start server
 # 'python manage.py runserver'

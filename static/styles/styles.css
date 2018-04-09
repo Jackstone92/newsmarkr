@@ -363,7 +363,7 @@ body {
   justify-content: space-around;
   align-items: flex-end;
   /* background-color: black; */
-  background-image: url('https://dreamlandia.com/images/N/newspaper.jpg');
+  /* background-image: url('https://dreamlandia.com/images/N/newspaper.jpg'); */
   background-size: cover;
   background-position: center center;
   height: 400px;

@@ -36,7 +36,10 @@ class User(db.Model):
     email = db.Column(db.String(35), unique=True) # want only one user with same email per table
     username = db.Column(db.String(80), unique=True) # want only one user with same username per table
     password = db.Column(db.String(60)) # 60 chars for bcrypt hashed password standard
-    image = db.Column(db.String(256))
+    profile_picture = db.Column(db.String(256))
+    profile_picture_upload = db.Column(db.String(256))
+    cover_photo = db.Column(db.String(256))
+    cover_photo_upload = db.Column(db.String(256))
     # create flag for permissions
     is_admin = db.Column(db.Boolean)
 
@@ -47,13 +50,16 @@ class User(db.Model):
     live_comments = db.relationship('LiveComment', backref='user', lazy='dynamic')
 
     # constructor called when class is instantiated for first time
-    def __init__(self, fullname, email, username, password, is_admin=False, image='https://www.communitylandtrust.ca/wp-content/uploads/2015/10/placeholder.png'):
+    def __init__(self, fullname, email, username, password, profile_picture, profile_picture_upload, cover_photo, cover_photo_upload, is_admin=False):
         self.fullname = fullname
         self.email = email
         self.username = username
         self.password = password
         self.is_admin = is_admin
-        self.image = image
+        self.profile_picture = profile_picture
+        self.profile_picture_upload = profile_picture_upload
+        self.cover_photo = cover_photo
+        self.cover_photo_upload = cover_photo_upload
 
     # representation - how do you want to display this when interacting with it in, say, the terminal?
     def __repr__(self):

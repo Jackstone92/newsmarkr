@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="container profile">
+
+      <div class="row profile__header">
+        {% if current_user.cover_photo_upload %}
+        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ url_for('static', filename='uploads/images/' + current_user.cover_photo_upload) }}')">
+        {% else %}
+        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ current_user.cover_photo }}')">
+        {% endif %}
+          <div class="col-md-2 offset-md-2"></div>
+          <div class="col-md-3 profile__header--imgwrapper">
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editCoverPhotoModal">Update Cover Photo</button>
+            {% if current_user.profile_picture_upload %}
+              <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
+            {% else %}
+              <img class="img-thumbnail" src="{{ current_user.profile_picture }}" />
+            {% endif %}
+            <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#editProfilePictureModal">Update Profile Picture</button>
+          </div>
+          <div class="col-md-3 profile__header--name">
+            <h3>{{ current_user.fullname }}</h3>
+          </div>
+          <div class="col-md-4 offset-md-6"></div>
+        </div>
+      </div>
+
+      <div class="row profile__nav">
+        <div class="col-md-12">
+          <ul class="nav nav-fill">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('profile') }}">Timeline</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
+            </li>
+            <li class="nav-item active-nav-item">
+              <a class="nav-link" href="{{ url_for('edit_profile') }}">Edit Profile</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <br/>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Cover Photo Modal -->
+<div class="modal fade" id="editCoverPhotoModal" tabindex="-1" role="dialog" aria-labelledby="editCoverPhotoModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCoverPhotoModalLabel">Update Cover Photo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% from "_formhelpers.html" import render_field %}
+      <form action="{{ url_for('edit_cover_photo') }}" method="POST" enctype="multipart/form-data" role="form">
+        {{ edit_cover_photo_form.hidden_tag() }}
+        <div class="modal-body">
+          {{ render_field(edit_cover_photo_form.cover_photo, class='form-control', value=current_user.cover_photo) }}
+          {{ render_field(edit_cover_photo_form.cover_photo_upload, class='form-control', value=current_user.cover_photo_upload) }}
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Update Cover Photo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Picture Modal -->
+<div class="modal fade" id="editProfilePictureModal" tabindex="-1" role="dialog" aria-labelledby="editProfilePictureModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProfilePictureModalLabel">Update Profile Picture</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% from "_formhelpers.html" import render_field %}
+      <form action="{{ url_for('edit_profile_picture') }}" method="POST" enctype="multipart/form-data" role="form">
+        {{ edit_profile_picture_form.hidden_tag() }}
+        <div class="modal-body">
+          {{ render_field(edit_profile_picture_form.profile_picture, class='form-control', value=current_user.profile_picture) }}
+          {{ render_field(edit_profile_picture_form.profile_picture_upload, class='form-control', value=current_user.profile_picture_upload) }}
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" type="submit">Update Profile Picture</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
