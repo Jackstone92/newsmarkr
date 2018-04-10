@@ -13,15 +13,15 @@
         {% else %}
         <div class="col-md-12 profile__header--cover" style="background-image: url('{{ current_user.cover_photo }}')">
         {% endif %}
+          <button type="button" class="btn btn-secondary profile__header--edit-cover-photo-button" data-toggle="modal" data-target="#editCoverPhotoModal">Update Cover Photo</button>
           <div class="col-md-2 offset-md-2"></div>
           <div class="col-md-3 profile__header--imgwrapper">
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editCoverPhotoModal">Update Cover Photo</button>
             {% if current_user.profile_picture_upload %}
               <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
             {% else %}
               <img class="img-thumbnail" src="{{ current_user.profile_picture }}" />
             {% endif %}
-            <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#editProfilePictureModal">Update Profile Picture</button>
+            <button class="btn btn-secondary profile__header--edit-profile-picture-button" type="button" data-toggle="modal" data-target="#editProfilePictureModal">Update Profile Picture</button>
           </div>
           <div class="col-md-3 profile__header--name">
             <h3>{{ current_user.fullname }}</h3>
@@ -52,8 +52,9 @@
       <br/>
 
       <div class="row profile__edit-profile">
-        <div class="col-md-2"></div>
+        <div class="offset-md-2"></div>
         <div class="col-md-8 boxshadow">
+          <br/>
           <h3 class="text-center">Edit About Section</h3>
           <br/>
           {% if not profile %}
@@ -84,7 +85,7 @@
             <br/><br/>
           </form>
         </div>
-        <div class="col-md-2"></div>
+        <div class="offset-md-2"></div>
       </div>
 
       <br/>

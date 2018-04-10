@@ -55,7 +55,7 @@
           <h3 class="text-center">Add a Friend</h3>
           <br/>
           {% from "_formhelpers.html" import render_field %}
-          <form class="form-inline justify-content-center" method="POST" action="{{ url_for('add_friend') }}">
+          <form class="form-inline justify-content-center row" method="POST" action="{{ url_for('add_friend') }}">
             {{ add_friends_form.hidden_tag() }}
             {{ render_field(add_friends_form.username, class='form-control', placeholder="Enter a username...", required=True) }}
             <button type="submit" class="btn btn-success">Add Friend</button>
@@ -66,6 +66,7 @@
           <div class="col-md-12">
             <br/><br/><hr/><br/>
             <h3>Pending Requests</h3>
+            <br/>
             <div class="row">
               {% for request in pending_requests %}
                 <div class="card col-md-3 boxshadow">
@@ -95,6 +96,7 @@
           <div class="col-md-12">
             <br/><br/><hr/><br/>
             <h3>Friend Requests</h3>
+            <br/>
           </div>
           {% for friend_request in friend_requests %}
             <div class="card col-md-3 boxshadow">
@@ -123,10 +125,11 @@
         {% endif %}
       </div>
 
-      <div class="row profile__friend-requests--list">
+      <br/>
+
+      <div class="row profile__friend-requests--list boxshadow">
         <!-- friends list -->
         <div class="col-md-12">
-          <br/><br/>
           <div class="row">
             <div class="col-md-10">
               <h3>Friends</h3>
@@ -147,9 +150,9 @@
           {% for friend in friends %}
             <div class="col-md-3">
               {% if User.query.filter_by(id=friend.friend_id).profile_picture_upload %}
-              <img class="img-thumbnail boxshadow" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend.user_id).first().profile_picture_upload) }}" />
+              <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend.user_id).first().profile_picture_upload) }}" />
               {% else %}
-              <img class="img-thumbnail boxshadow" src="{{ User.query.filter_by(id=friend.friend_id).first().profile_picture }}" />
+              <img class="img-thumbnail" src="{{ User.query.filter_by(id=friend.friend_id).first().profile_picture }}" />
               {% endif %}
               <h3 class="text-center">{{ User.query.filter_by(id=friend.friend_id).first().fullname }}</h3>
               {% if edit_status_friends == True %}
