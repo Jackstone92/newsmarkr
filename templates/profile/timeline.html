@@ -49,19 +49,19 @@
 
       <br/>
 
-      <!-- posts filter nav -->
-      <div class="row">
-        <div class="offset-md-2"></div>
-        <div class="col-md-4">
-          <button class="btn btn-secondary col-md-12 active" onclick="window.location.href = '{{ url_for('profile', posts='All Posts') }}'">All Posts</button>
-        </div>
-        <div class="col-md-4">
-          <button class="btn btn-secondary col-md-12" onclick="window.location.href = '{{ url_for('profile', posts='Just My Posts') }}'">Just My Posts</button>
-        </div>
-        <div class="offset-md-2"></div>
-      </div>
-
       {% if posts|length > 0 %}
+        <!-- posts filter nav -->
+        <div class="row">
+          <div class="offset-md-2"></div>
+          <div class="col-md-4">
+            <button class="btn btn-secondary col-md-12 active" onclick="window.location.href = '{{ url_for('profile', posts='All Posts') }}'">All Posts</button>
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-secondary col-md-12" onclick="window.location.href = '{{ url_for('profile', posts='Just My Posts') }}'">Just My Posts</button>
+          </div>
+          <div class="offset-md-2"></div>
+        </div>
+
         {% for post in posts %}
           <div class="row social__timeline">
 
