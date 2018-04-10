@@ -69,7 +69,7 @@ def browse():
             else:
                 break;
 
-    articles = ArticlePool.query.order_by('id desc')
+    articles = ArticlePool.query.order_by('published_on desc')
 
     return render_template('articlepool/browse.html', articles=articles, current_user=current_user, Bookmark=Bookmark)
 
