@@ -55,11 +55,11 @@ class User(db.Model):
         self.email = email
         self.username = username
         self.password = password
-        self.is_admin = is_admin
         self.profile_picture = profile_picture
         self.profile_picture_upload = profile_picture_upload
         self.cover_photo = cover_photo
         self.cover_photo_upload = cover_photo_upload
+        self.is_admin = is_admin
 
     # representation - how do you want to display this when interacting with it in, say, the terminal?
     def __repr__(self):

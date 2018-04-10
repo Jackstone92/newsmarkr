@@ -5,14 +5,21 @@ import os
 from settings import UPLOADED_IMAGES_DEST
 
 from datetime import datetime
+# geocoder for ip location detection
+import geocoder
 
 from flask_newsmarkr import db, uploaded_images
 
 from social.models import Post, Comment
 from social.form import CommentForm
-from profile.models import Friends, FriendRequest
-from profile.form import AddFriendsForm, EditProfilePicture, EditCoverPhoto
+from profile.models import Friends, FriendRequest, Profile
+# constants from profile selection
+from profile.models import POLITICAL_SPECTRUM, POLITICAL_PARTIES, FAVOURITE_NEWS_WEBSITES, NEWS_WEBSITE_LINKS
+from profile.form import AddFriendsForm, EditProfilePicture, EditCoverPhoto, EditAbout
 from user.models import User
+
+# functions for obtaining profile stats
+from utils.statistics import total_num_posts, total_num_comments, total_num_friends, total_num_collections, total_num_bookmarks_not_posts
 
 # TODO: add login_required decorators to all other views
 
@@ -56,8 +63,28 @@ def profile():
 def about():
     # about view
     current_user = User.query.filter_by(username=session['username']).first()
+    profile = Profile.query.filter_by(user_id=current_user.id).first()
+    display_profile = {}
+    # get profile content from constants to render in template
+    if profile:
+        display_profile['birthday'] = profile.birthday
+        display_profile['political_spectrum'] = POLITICAL_SPECTRUM[profile.political_spectrum]
+        display_profile['political_party'] = POLITICAL_PARTIES[profile.political_party]
+        display_profile['favourite_news_websites'] = profile.favourite_news_websites.split(',')
+        display_profile['allow_location_detection'] = str(profile.allow_location_detection)
+        display_profile['location'] = profile.location
+        display_profile['lat'] = profile.lat
+        display_profile['lon'] = profile.lon
 
-    return render_template('profile/about.html', current_user=current_user)
+    # get stats
+    statistics = {}
+    statistics['total_num_posts'] = total_num_posts(current_user.id)
+    statistics['total_num_comments'] = total_num_comments(current_user.id)
+    statistics['total_num_friends'] = total_num_friends(current_user.id)
+    statistics['total_num_collections'] = total_num_collections(current_user.id)
+    statistics['total_num_bookmarks_not_posts'] = total_num_bookmarks_not_posts(current_user.id)
+
+    return render_template('profile/about.html', current_user=current_user, profile=display_profile, statistics=statistics, FAVOURITE_NEWS_WEBSITES=FAVOURITE_NEWS_WEBSITES, NEWS_WEBSITE_LINKS=NEWS_WEBSITE_LINKS)
 
 
 @app.route('/profile/friends', methods=['GET', 'POST'])
@@ -242,8 +269,18 @@ def edit_profile():
     current_user = User.query.filter_by(username=session['username']).first()
     edit_cover_photo_form = EditCoverPhoto()
     edit_profile_picture_form = EditProfilePicture()
+    edit_about_form = EditAbout()
+    profile = Profile.query.filter_by(user_id=current_user.id).first()
+    # set edit_about_form values
+    if profile:
+        edit_about_form.birthday.data = profile.birthday
+        edit_about_form.political_spectrum.data = profile.political_spectrum
+        edit_about_form.political_party.data = profile.political_party
+        edit_about_form.favourite_news_websites.data = profile.favourite_news_websites.split(',')
+        # convert db bool to 'yes' or 'no'
+        edit_about_form.allow_location_detection.data = 'yes' if profile.allow_location_detection == True else 'no'
 
-    return render_template('profile/edit-profile.html', current_user=current_user, edit_cover_photo_form=edit_cover_photo_form, edit_profile_picture_form=edit_profile_picture_form)
+    return render_template('profile/edit-profile.html', current_user=current_user, profile=profile, edit_cover_photo_form=edit_cover_photo_form, edit_profile_picture_form=edit_profile_picture_form, edit_about_form=edit_about_form)
 
 
 @app.route('/profile/edit-profile/edit-profile-picture', methods=['POST'])
@@ -306,3 +343,78 @@ def edit_cover_photo():
             db.session.commit()
 
     return redirect(url_for('edit_profile'))
+
+
+@app.route('/profile/edit-profile/edit-about/<userId>', methods=['POST'])
+def edit_about(userId):
+    edit_about_form = EditAbout()
+
+    if edit_about_form.validate_on_submit():
+        birthday = edit_about_form.birthday.data
+        political_spectrum = edit_about_form.political_spectrum.data
+        political_party = edit_about_form.political_party.data
+        favourite_news_websites = edit_about_form.favourite_news_websites.data
+        allow_location_detection = edit_about_form.allow_location_detection.data
+
+        profile = Profile.query.filter_by(user_id=userId).first()
+        if profile:
+            # update profile
+            if profile.birthday != birthday:
+                profile.birthday = birthday
+                db.session.flush()
+
+            if profile.political_spectrum != political_spectrum:
+                profile.political_spectrum = political_spectrum
+                db.session.flush()
+
+            if profile.political_party != political_party:
+                profile.political_party = political_party
+                db.session.flush()
+
+            if profile.favourite_news_websites != ",".join(favourite_news_websites):
+                profile.favourite_news_websites = ",".join(favourite_news_websites)
+                db.session.flush()
+
+            if profile.allow_location_detection == True and allow_location_detection == 'no' or profile.allow_location_detection == False and allow_location_detection == 'yes':
+                if allow_location_detection == 'yes':
+                    profile.allow_location_detection = True
+                else:
+                    profile.allow_location_detection = False
+
+                db.session.flush()
+        else:
+            # create new profile
+            # convert allow_location_detection to bool
+            allow_bool = None
+            if allow_location_detection == 'yes':
+                allow_bool = True
+            else:
+                allow_bool = False
+
+            profile = Profile(
+                userId,
+                birthday,
+                political_spectrum,
+                political_party,
+                favourite_news_websites,
+                allow_bool,
+                None,
+                None,
+                None
+            )
+            db.session.add(profile)
+            db.session.flush()
+
+        # if allow_location_detection, get location
+        if profile.allow_location_detection == True:
+            g = geocoder.ip('me')
+            if profile.location != g.city + ", " + g.country or profile.lat != g.latlng[0] or profile.lon != g.latlng[1]:
+                # add location
+                profile.lat = g.latlng[0]
+                profile.lon = g.latlng[1]
+                profile.location = g.city + ", " + g.country
+                db.session.flush()
+
+        db.session.commit()
+
+    return redirect(url_for('about'))

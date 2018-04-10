@@ -3,53 +3,153 @@
 {% block title %}About{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="container profile">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="container profile">
 
-      <div class="row profile__header">
-        {% if current_user.cover_photo_upload %}
-        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ url_for('static', filename='uploads/images/' + current_user.cover_photo_upload) }}')">
-        {% else %}
-        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ current_user.cover_photo }}')">
-        {% endif %}
-          <div class="col-md-2 offset-md-2"></div>
-          <div class="col-md-3 profile__header--imgwrapper">
-            {% if current_user.profile_picture_upload %}
-              <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
-            {% else %}
-              <img class="img-thumbnail" src="{{ current_user.profile_picture }}" />
+        <div class="row profile__header">
+          {% if current_user.cover_photo_upload %}
+          <div class="col-md-12 profile__header--cover" style="background-image: url('{{ url_for('static', filename='uploads/images/' + current_user.cover_photo_upload) }}')">
+          {% else %}
+          <div class="col-md-12 profile__header--cover" style="background-image: url('{{ current_user.cover_photo }}')">
+          {% endif %}
+            <div class="col-md-2 offset-md-2"></div>
+            <div class="col-md-3 profile__header--imgwrapper">
+              {% if current_user.profile_picture_upload %}
+                <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
+              {% else %}
+                <img class="img-thumbnail" src="{{ current_user.profile_picture }}" />
+              {% endif %}
+            </div>
+            <div class="col-md-3 profile__header--name">
+              <h3>{{ current_user.fullname }}</h3>
+            </div>
+            <div class="col-md-4 offset-md-6"></div>
+          </div>
+        </div>
+
+        <div class="row profile__nav">
+          <div class="col-md-12">
+            <ul class="nav nav-fill">
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('profile') }}">Timeline</a>
+              </li>
+              <li class="nav-item active-nav-item">
+                <a class="nav-link" href="{{ url_for('about') }}">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('edit_profile') }}">Edit Profile</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <br/>
+
+        <div class="row profile__about">
+          <!-- about -->
+          <div class="col-md-5 profile__about--about boxshadow">
+            <h3 class="text-center">About</h3>
+            <br/>
+            {% if not profile %}
+              <p class="text-center">You don't currently have any information available here...</p>
+            {% endif %}
+
+            {% if profile.political_spectrum %}
+              <div class="col-md-12 profile__about--content">
+                <p>Political Spectrum: <b>{{ profile.political_spectrum }}</b></p>
+              </div>
+            {% endif %}
+
+            {% if profile.political_party %}
+              <div class="col-md-12 profile__about--content">
+                <p>Political Party: <b>{{ profile.political_party }}</b></p>
+              </div>
+            {% endif %}
+
+            {% if profile.favourite_news_websites %}
+              <div class="col-md-12 profile__about--content">
+                <p>Favourite News Websites: </p>
+                <div class="list-group">
+                  {% for item in profile.favourite_news_websites %}
+                    <a href="{{ NEWS_WEBSITE_LINKS[item] }}" target="_blank" class="list-group-item list-group-item-action">{{ FAVOURITE_NEWS_WEBSITES[item] }}</a>
+                  {% endfor %}
+                </div>
+                <br/>
+              </div>
             {% endif %}
           </div>
-          <div class="col-md-3 profile__header--name">
-            <h3>{{ current_user.fullname }}</h3>
+
+          <div class="offset-md-2"></div>
+
+          <!-- stats -->
+          <div class="col-md-5 profile__about--stats boxshadow">
+            <h3 class="text-center">Statistics</h3>
+            <br/>
+
+            <div class="col-md-12 profile__about--content">
+              <p>Total Posts: <b>{{ statistics['total_num_posts'] }}</b></p>
+            </div>
+            <div class="col-md-12 profile__about--content">
+              <p>Total Comments: <b>{{ statistics['total_num_comments'] }}</b></p>
+            </div>
+            <div class="col-md-12 profile__about--content">
+              <p>Total Friends: <b>{{ statistics['total_num_friends'] }}</b></p>
+            </div>
+            <div class="col-md-12 profile__about--content">
+              <p>Total Collections: <b>{{ statistics['total_num_collections'] }}</b></p>
+            </div>
+            <div class="col-md-12 profile__about--content">
+              <p>Total Bookmarks: <b>{{ statistics['total_num_bookmarks_not_posts'] }}</b></p>
+            </div>
           </div>
-          <div class="col-md-4 offset-md-6"></div>
         </div>
-      </div>
 
-      <div class="row profile__nav">
-        <div class="col-md-12">
-          <ul class="nav nav-fill">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('profile') }}">Timeline</a>
-            </li>
-            <li class="nav-item active-nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('edit_profile') }}">Edit Profile</a>
-            </li>
-          </ul>
+        <br/>
+
+        <div class="row">
+          <div class="col-md-12 profile__about--personal boxshadow">
+            <h3 class="text-center">Details</h3>
+            {% if profile.birthday %}
+              <div class="col-md-12 profile__about--content">
+                <p>Birthday: <b>{{ profile.birthday }}</b></p>
+              </div>
+            {% endif %}
+
+            {% if profile.allow_location_detection == 'True'%}
+              <div class="col-md-12 profile__about--content">
+                <p>My area: <b>{{ profile.location }}</b></p>
+                <div id="location_map" style="height: 300px; width: 100%;"></div>
+              </div>
+              <br/>
+            {% endif %}
+          </div>
         </div>
+
+        <br/>
+
       </div>
-
-      <br/>
-
     </div>
   </div>
-</div>
+
+  <!-- for location using google maps api -->
+  <script>
+    function initMap() {
+      var latlon = {lat: {{ profile.lat }}, lng: {{ profile.lon }}};
+      var map = new google.maps.Map(document.getElementById('location_map'), {
+        zoom: 9,
+        center: latlon
+      });
+      var marker = new google.maps.Marker({
+        position: latlon,
+        map: map
+      });
+    }
+  </script>
+  {% if profile.allow_location_detection == 'True' %}
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABd2wRgIb6US1CH3Xh0KqrsTLIs5WcONc&callback=initMap"></script>
+  {% endif %}
 {% endblock %}

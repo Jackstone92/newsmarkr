@@ -51,8 +51,9 @@
 
       <div class="row profile__friend-requests">
         <!-- add a friend -->
-        <div class="col-md-12">
-          <h3>Add a Friend</h3>
+        <div class="col-md-12 profile__friend-requests--add-a-friend boxshadow">
+          <h3 class="text-center">Add a Friend</h3>
+          <br/>
           {% from "_formhelpers.html" import render_field %}
           <form class="form-inline justify-content-center" method="POST" action="{{ url_for('add_friend') }}">
             {{ add_friends_form.hidden_tag() }}
@@ -67,7 +68,7 @@
             <h3>Pending Requests</h3>
             <div class="row">
               {% for request in pending_requests %}
-                <div class="card col-md-3">
+                <div class="card col-md-3 boxshadow">
                   {% if User.query.filter_by(id=request.friend_id).first().profile_picture_upload %}
                   <img class="card-img-top" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=request.friend_id).first().profile_picture_upload) }}" />
                   {% else %}
@@ -96,7 +97,7 @@
             <h3>Friend Requests</h3>
           </div>
           {% for friend_request in friend_requests %}
-            <div class="card col-md-3">
+            <div class="card col-md-3 boxshadow">
               {% if User.query.filter_by(id=friend_request.friend_id).first().profile_picture_upload %}
               <img class="card-img-top profile__friend-requests--img" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend_request.friend_id).first().profile_picture_upload) }}" />
               {% else %}
@@ -125,7 +126,7 @@
       <div class="row profile__friend-requests--list">
         <!-- friends list -->
         <div class="col-md-12">
-          <br/><br/><hr/><br/>
+          <br/><br/>
           <div class="row">
             <div class="col-md-10">
               <h3>Friends</h3>
@@ -146,9 +147,9 @@
           {% for friend in friends %}
             <div class="col-md-3">
               {% if User.query.filter_by(id=friend.friend_id).profile_picture_upload %}
-              <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend.user_id).first().profile_picture_upload) }}" />
+              <img class="img-thumbnail boxshadow" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend.user_id).first().profile_picture_upload) }}" />
               {% else %}
-              <img class="img-thumbnail" src="{{ User.query.filter_by(id=friend.friend_id).first().profile_picture }}" />
+              <img class="img-thumbnail boxshadow" src="{{ User.query.filter_by(id=friend.friend_id).first().profile_picture }}" />
               {% endif %}
               <h3 class="text-center">{{ User.query.filter_by(id=friend.friend_id).first().fullname }}</h3>
               {% if edit_status_friends == True %}
@@ -165,7 +166,7 @@
         {% endif %}
       </div>
 
-      <br/><br/><br/><br/>
+      <br/><br/><hr/><br/><br/>
 
     </div>
   </div>
