@@ -112,19 +112,21 @@ Or, feel free to create a new account and try things out for yourself!
 4. Ensure you are running from the virtual environment by typing: `source venv/bin/activate`
 5. Type the following command to access the shell: `python manage.py shell`
 6. Enter the following commands to reset the database:
-    ```python
-    from flask_newsmarkr import db # import database
-    db.session.commit() # need to commit before dropping all tables
-    db.drop_all() # drop all tables
-    # import all sqlalchemy models
-    from articlepool.models import *
-    from bookmark.models import *
-    from profile.models import *
-    from social.models import *
-    from user.models import *
-    # create tables from sqlalchemy models
-    db.create_all()
-    ```
+
+```python
+from flask_newsmarkr import db # import database
+db.session.commit() # need to commit before dropping all tables
+db.drop_all() # drop all tables
+# import all sqlalchemy models
+from articlepool.models import *
+from bookmark.models import *
+from profile.models import *
+from social.models import *
+from user.models import *
+# create tables from sqlalchemy models
+db.create_all()
+```
+
 7. Back out from the shell and enter the following commands to transfer database handling to flask_migrate:
   - `python manage.py db init`
   - `python manage.py db migrate`
