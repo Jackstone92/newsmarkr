@@ -144,7 +144,6 @@ body {
 /* ======== Browse ======== */
 .browse__header {
   height: 600px;
-  background-image: url('/static/images/browse.jpg');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
