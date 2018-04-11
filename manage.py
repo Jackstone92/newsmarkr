@@ -21,7 +21,7 @@ from bookmark.models import Collection, Bookmark, Category
 # from profile.models import
 from social.models import Post, Comment
 from user.models import User
-from profile.models import Friends, FriendRequest
+from profile.models import Friends, FriendRequest, Profile
 
 
 # instantiate manger from that app
@@ -71,6 +71,7 @@ api_manager.create_api(Comment, methods=['GET', 'POST', 'PUT', 'DELETE'])
 api_manager.create_api(User, methods=['GET', 'POST', 'PUT', 'DELETE'])
 api_manager.create_api(Friends, methods=['GET', 'POST', 'PUT', 'DELETE'])
 api_manager.create_api(FriendRequest, methods=['GET', 'POST', 'PUT', 'DELETE'])
+api_manager.create_api(Profile, methods=['GET', 'POST', 'PUT', 'DELETE'])
 
 
 # run server using following command:
