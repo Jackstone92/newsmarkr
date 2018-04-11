@@ -142,7 +142,7 @@ Here is a table that contains all of NewsmarkR's API endpoints:
 
 
 | Endpoint | Model | URL | Supported Methods |
-| --- | --- | --- |
+| --- | --- | --- | --- |
 | ArticlePool | ArticlePool | http://localhost:5000/api/article_pool | `GET`, `POST`, `PUT`, `DELETE` |
 | LiveComment | ArticlePool | http://localhost:5000/api/live_comment | `GET`, `POST`, `PUT`, `DELETE` |
 | Collection | Bookmark | http://localhost:5000/api/collection | `GET`, `POST`, `PUT`, `DELETE` |
