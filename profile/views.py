@@ -21,11 +21,13 @@ from user.models import User
 # functions for obtaining profile stats
 from utils.statistics import total_num_posts, total_num_comments, total_num_friends, total_num_collections, total_num_bookmarks_not_posts
 
-# TODO: add login_required decorators to all other views
+# import custom decorators
+from user.decorators import login_required
 
 
 @app.route('/profile', methods=['GET', 'POST'])
 @app.route('/profile/timeline', methods=['GET', 'POST'])
+@login_required
 def profile():
     # timeline view
     current_user = User.query.filter_by(username=session['username']).first()
@@ -47,7 +49,7 @@ def profile():
         for friend in Friends.query.filter_by(friend_id=current_user.id):
             for post in Post.query.filter_by(user_id=friend.user_id).order_by('id desc'):
                 friends_posts.append(post)
-                
+
         # list comprehension to combine current_user posts and friends_posts posts
         if posts and friends_posts:
             both.append(posts)
@@ -61,6 +63,7 @@ def profile():
 
 
 @app.route('/profile/about', methods=['GET', 'POST'])
+@login_required
 def about():
     # about view
     current_user = User.query.filter_by(username=session['username']).first()
@@ -89,6 +92,7 @@ def about():
 
 
 @app.route('/profile/friends', methods=['GET', 'POST'])
+@login_required
 def friends():
     # friends view
     add_friends_form = AddFriendsForm()
@@ -108,6 +112,7 @@ def friends():
 
 
 @app.route('/profile/friends/add-friend', methods=['POST'])
+@login_required
 def add_friend():
     add_friends_form = AddFriendsForm()
     current_user = User.query.filter_by(username=session['username']).first()
@@ -153,6 +158,7 @@ def add_friend():
 
 
 @app.route('/profile/friends/accept-friend/<userId>/<friendId>', methods=['POST'])
+@login_required
 def accept_friend(userId, friendId):
     request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId).first()
     request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId).first()
@@ -189,6 +195,7 @@ def accept_friend(userId, friendId):
 
 
 @app.route('/profile/friends/ignore-friend/<userId>/<friendId>', methods=['POST'])
+@login_required
 def ignore_friend(userId, friendId):
     request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId).first()
     request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId).first()
@@ -202,6 +209,7 @@ def ignore_friend(userId, friendId):
     return redirect(url_for('friends'))
 
 @app.route('/profile/friends/cancel/<userId>/<friendId>', methods=['POST'])
+@login_required
 def cancel_request(userId, friendId):
     request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId)
     request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId)
@@ -220,6 +228,7 @@ def cancel_request(userId, friendId):
 
 
 @app.route('/profile/friends/change-edit-status', methods=['POST'])
+@login_required
 def change_edit_status_friends():
     """ Collection method to change edit status """
     if 'edit_status_friends' in session:
@@ -232,6 +241,7 @@ def change_edit_status_friends():
 
 
 @app.route('/profile/friends/delete-friend/<userId>/<friendId>', methods=['POST'])
+@login_required
 def delete_friend(userId, friendId):
     # remove original request
     request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId)
@@ -265,6 +275,7 @@ def delete_friend(userId, friendId):
 
 
 @app.route('/profile/edit-profile', methods=['GET', 'POST'])
+@login_required
 def edit_profile():
     # edit profile view
     current_user = User.query.filter_by(username=session['username']).first()
@@ -285,6 +296,7 @@ def edit_profile():
 
 
 @app.route('/profile/edit-profile/edit-profile-picture', methods=['POST'])
+@login_required
 def edit_profile_picture():
     edit_profile_picture_form = EditProfilePicture()
 
@@ -316,6 +328,7 @@ def edit_profile_picture():
 
 
 @app.route('/profile/edit-profile/edit-cover-photo', methods=['POST'])
+@login_required
 def edit_cover_photo():
     edit_cover_photo_form = EditCoverPhoto()
 
@@ -347,6 +360,7 @@ def edit_cover_photo():
 
 
 @app.route('/profile/edit-profile/edit-about/<userId>', methods=['POST'])
+@login_required
 def edit_about(userId):
     edit_about_form = EditAbout()
 

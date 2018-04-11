@@ -17,6 +17,10 @@ from articlepool.form import LiveCommentForm
 
 from utils.scrape import article_meta_scrape, article_content_scrape, bbc_article_content_scrape
 
+# import custom decorators
+from user.decorators import login_required
+
+
 # dictionary of rss feed urls
 RSS_FEEDS = {
                 'bbc': 'http://feeds.bbci.co.uk/news/rss.xml'
@@ -24,7 +28,9 @@ RSS_FEEDS = {
                 # 'cnn': 'http://rss.cnn.com/rss/edition.rss'
             }
 
+
 @app.route('/browse-headlines', methods=['GET'])
+@login_required
 def browse():
     current_user = User.query.filter_by(username=session['username']).first()
     meta = None
@@ -74,6 +80,7 @@ def browse():
     return render_template('articlepool/browse.html', articles=articles, current_user=current_user, Bookmark=Bookmark)
 
 @app.route('/browse-headlines/<articleId>', methods=['GET'])
+@login_required
 def view_browse_article(articleId):
     # TODO: fix 'post' in view.html
     article_pool = ArticlePool.query.filter_by(id=articleId).first()
@@ -94,6 +101,7 @@ def view_browse_article(articleId):
 
 
 @app.route('/browse-headlines/<articleTitle>/share', methods=['POST'])
+@login_required
 def share_browse_article(articleTitle):
     share_url = None
 
@@ -104,6 +112,7 @@ def share_browse_article(articleTitle):
 
 
 @app.route('/browse-headlines/<articleTitle>/bookmark', methods=['POST'])
+@login_required
 def bookmark_browse_article(articleTitle):
     bookmark_url = None
     collectionId = None
@@ -133,6 +142,7 @@ def bookmark_browse_article(articleTitle):
 
 
 @app.route('/browse-headlines/<articleId>/like', methods=['POST'])
+@login_required
 def increment_browse_like(articleId):
     """ Social-Feed Post method to increment number of likes """
     article_pool = ArticlePool.query.filter_by(id=articleId).first()
@@ -142,6 +152,7 @@ def increment_browse_like(articleId):
 
 
 @app.route('/browse-headlines/<articleId>/dislike', methods=['POST'])
+@login_required
 def increment_browse_dislike(articleId):
     """ Social-Feed Post method to increment number of dislikes """
     article_pool = ArticlePool.query.filter_by(id=articleId).first()
@@ -151,6 +162,7 @@ def increment_browse_dislike(articleId):
 
 
 @app.route('/browse-headlines/<articleId>/comment', methods=['POST'])
+@login_required
 def browse_comment(articleId):
     current_user = User.query.filter_by(username=session['username']).first()
     live_comment_form = LiveCommentForm()

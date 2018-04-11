@@ -57,6 +57,7 @@ def library():
 
 
 @app.route('/library/add', methods=['GET', 'POST'])
+@login_required
 def add_collection():
     """ Library method to add new collection """
     # get current user
@@ -93,6 +94,7 @@ def add_collection():
 #                                                                #
 # ============================================================== #
 @app.route('/library/<collectionId>', methods=['GET', 'POST'])
+@login_required
 def collection(collectionId):
     """ Collection page. Lists bookmarks in current collection """
     form = ScrapeForm()
@@ -121,6 +123,7 @@ def collection(collectionId):
     return render_template('bookmark/bookmarks.html', form=form, edit_form=edit_form, bookmarks=bookmarks, error=error, collection=collection, edit_bookmark_status=edit_bookmark_status)
 
 @app.route('/library/<collectionId>/change-edit-status', methods=['POST'])
+@login_required
 def change_edit_status(collectionId):
     """ Collection method to change edit status """
     if 'edit_bookmark_status' in session:
@@ -132,6 +135,7 @@ def change_edit_status(collectionId):
     return redirect(url_for('collection', collectionId=collectionId))
 
 @app.route('/library/<collectionId>/edit-collection', methods=['POST'])
+@login_required
 def edit_collection(collectionId):
     """ Collection method to update collection db """
     edit_form = EditForm()
@@ -178,6 +182,7 @@ def edit_collection(collectionId):
     return redirect(url_for('collection', collectionId=collectionId))
 
 @app.route('/library/<collectionId>/delete-collection', methods=['GET', 'POST'])
+@login_required
 def delete_collection(collectionId):
     """ Collection method to delete a collection """
     collection_to_delete = Collection.query.filter_by(id=collectionId).first()
@@ -200,6 +205,7 @@ def delete_collection(collectionId):
     return redirect(url_for('library'))
 
 @app.route('/library/<collectionId>/delete-bookmark', methods=['POST'])
+@login_required
 def delete_bookmark(collectionId):
     # get bookmarkId from request
     bookmarkId = request.args.get('bookmarkId')
@@ -217,6 +223,7 @@ def delete_bookmark(collectionId):
     return redirect(url_for('collection', collectionId=collectionId))
 
 @app.route('/library/<collectionId>/scrape', methods=['GET', 'POST'])
+@login_required
 def scrape(collectionId):
     """ Bookmark scrape method """
     form = ScrapeForm()
@@ -285,6 +292,7 @@ def scrape(collectionId):
 #                                                                #
 # ============================================================== #
 @app.route('/library/<collectionId>/<bookmarkId>', methods=['GET','POST'])
+@login_required
 def show_bookmark(collectionId, bookmarkId):
     """ Bookmark display page. Displays bookmark from within a collection """
     bookmark = Bookmark.query.filter_by(id=bookmarkId).first()
@@ -299,6 +307,3 @@ def show_bookmark(collectionId, bookmarkId):
         article = '<h1>NOpe</h1>'
 
     return render_template('bookmark/view.html', bookmark_title=bookmark.title, article=article, collectionId=collectionId)
-
-
-# TODO: add share method

@@ -19,9 +19,13 @@ from social.form import PostForm, CommentForm
 # import scrape helper function
 from utils.scrape import article_meta_scrape, bbc_article_content_scrape
 
+# import custom decorators
+from user.decorators import login_required
+
 
 
 @app.route('/social-feed', methods=['GET', 'POST'])
+@login_required
 def social():
     current_user = User.query.filter_by(username=session['username']).first()
     form = PostForm()
@@ -54,6 +58,7 @@ def social():
 
 
 @app.route('/social-feed/<postId>', methods=['GET', 'POST'])
+@login_required
 def show_social_article(postId):
     """ Social-Feed display page """
     current_user = User.query.filter_by(username=session['username']).first()
@@ -73,6 +78,7 @@ def show_social_article(postId):
 
 
 @app.route('/social-feed/post', methods=['POST'])
+@login_required
 def social_post():
     form = PostForm()
     bookmark = None
@@ -174,6 +180,7 @@ def social_post():
 
 
 @app.route('/social-feed/<postId>/comment', methods=['POST'])
+@login_required
 def comment(postId):
     current_user = User.query.filter_by(username=session['username']).first()
     comment_form = CommentForm()
@@ -204,6 +211,7 @@ def comment(postId):
 
 
 @app.route('/social-feed/<postId>/like', methods=['POST'])
+@login_required
 def increment_post_like(postId):
     """ Social-Feed Post method to increment number of likes """
     post = Post.query.filter_by(id=postId).first()
@@ -213,6 +221,7 @@ def increment_post_like(postId):
 
 
 @app.route('/social-feed/<postId>/dislike', methods=['POST'])
+@login_required
 def increment_post_dislike(postId):
     """ Social-Feed Post method to increment number of dislikes """
     post = Post.query.filter_by(id=postId).first()
