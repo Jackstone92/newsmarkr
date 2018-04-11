@@ -4,9 +4,9 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-md-12">
-    <div class="container profile">
+  <div class="col-md-12 profile profile__header--main">
 
+    <div class="container">
       <div class="row profile__header">
         {% if current_user.cover_photo_upload %}
         <div class="col-md-12 profile__header--cover" style="background-image: url('{{ url_for('static', filename='uploads/images/' + current_user.cover_photo_upload) }}')">
@@ -46,9 +46,13 @@
           </ul>
         </div>
       </div>
+    </div>
+    <br/><br/>
+  </div>
 
+  <div class="col-md-12">
+    <div class="container">
       <br/>
-
       <div class="row profile__friend-requests">
         <!-- add a friend -->
         <div class="col-md-12 profile__friend-requests--add-a-friend boxshadow">

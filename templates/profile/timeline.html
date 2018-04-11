@@ -3,152 +3,155 @@
 {% block title %}Timeline{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="container profile">
+  <div class="row">
+    <div class="col-md-12 profile profile__header--main">
 
-      <div class="row profile__header">
-        {% if current_user.cover_photo_upload %}
-        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ url_for('static', filename='uploads/images/' + current_user.cover_photo_upload) }}')">
+      <div class="container">
+        <div class="row profile__header">
+          {% if current_user.cover_photo_upload %}
+            <div class="col-md-12 profile__header--cover" style="background-image: url('{{ url_for('static', filename='uploads/images/' + current_user.cover_photo_upload) }}')">
+          {% else %}
+            <div class="col-md-12 profile__header--cover" style="background-image: url('{{ current_user.cover_photo }}')">
+          {% endif %}
+            <div class="col-md-2 offset-md-2"></div>
+            <div class="col-md-3 profile__header--imgwrapper">
+              {% if current_user.profile_picture_upload %}
+                <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
+              {% else %}
+                <img class="img-thumbnail" src="{{ current_user.profile_picture }}" />
+              {% endif %}
+            </div>
+            <div class="col-md-3 profile__header--name">
+              <h3>{{ current_user.fullname }}</h3>
+            </div>
+            <div class="col-md-4 offset-md-6"></div>
+          </div>
+        </div>
+
+        <div class="row profile__nav">
+          <div class="col-md-12">
+            <ul class="nav nav-fill">
+              <li class="nav-item active-nav-item">
+                <a class="nav-link" href="{{ url_for('profile') }}">Timeline</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('about') }}">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('edit_profile') }}">Edit Profile</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <br/><br/>
+    </div>
+
+    <div class="col-md-12">
+      <div class="container">
+        {% if posts|length > 0 %}
+          <br/>
+          <!-- posts filter nav -->
+          <div class="row">
+            <div class="offset-md-2"></div>
+            <div class="col-md-4">
+              <button class="btn btn-secondary col-md-12 active" onclick="window.location.href = '{{ url_for('profile', posts='All Posts') }}'">All Posts</button>
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-secondary col-md-12" onclick="window.location.href = '{{ url_for('profile', posts='Just My Posts') }}'">Just My Posts</button>
+            </div>
+            <div class="offset-md-2"></div>
+          </div>
+          {% for post in posts %}
+            <div class="row social__timeline">
+
+              <div class="col-md-7 social__timeline--article" onclick="window.location.href='{{ url_for('show_social_article', postId=post.id) }}'">
+                <div class="card">
+                  <img class="card-img-top" src="{{ post.image }}" alt="Card image cap" />
+                  <div class="card-body">
+                    <h4 class="card-title">{{ post.title }}</h4>
+                    <p class="card-text">{{ post.description }}</p>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-center">Source: {{ post.source }}</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="col-md-5 social__timeline--comments">
+
+                <div class="card post boxshadow">
+                  <div class="card-body">
+                    <h4 class="card-title">Posted by {{ User.query.filter_by(id=post.user_id).first().username }} <span class="social__timeline--postdate"> on {{ post.posted_on }}</span></h4>
+                    <p>{{ post.post }}</p>
+                    <hr/>
+                    <div class="row">
+                      <div class="col-md-1"></div>
+                      <div class="col-md-1">
+                        <p>{{ post.num_likes }}</p>
+                      </div>
+                      <form class="col-md-4" method="POST" action="{{ url_for('increment_post_like', postId=post.id) }}">
+                        <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-up"></i> Like</button>
+                      </form>
+                      <div class="col-md-1">
+                        <p>{{ post.num_dislikes }}</p>
+                      </div>
+                      <form class="col-md-4" method="POST" action="{{ url_for('increment_post_dislike', postId=post.id) }}">
+                        <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-down"></i> Dislike</button>
+                      </form>
+                    </div>
+
+                    <hr/>
+                    <div class="social__timeline--comment-wrapper">
+                    {% for comment in Comment.query.filter_by(post_id=post.id) %}
+                      <div class="comment">
+                        <div class="comment__wrapper">
+                          {% if User.query.filter_by(id=comment.user_id).first().profile_picture_upload %}
+                          <img class="img-thumbnail comment__wrapper--img" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" alt="profile picture" />
+                          {% else %}
+                          <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().profile_picture }}" alt="profile picture" />
+                          {% endif %}
+                          <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().username }}</p>
+                        </div>
+                        <div class="comment__wrapper--comment">
+                          <p>{{ comment.comment }}</p>
+                        </div>
+                      </div>
+                    {% endfor %}
+                    </div>
+                  </div>
+
+                  <div class="comment__comment-entry">
+                    <hr/>
+                    {% from "_formhelpers.html" import render_field %}
+                    <form class="form-inline" method="POST" action="{{ url_for('comment', postId=post.id) }}">
+                      {{ comment_form.hidden_tag() }}
+                      {% if current_user.profile_picture_upload %}
+                      <img class="img-thumbnail comment__wrapper--img" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
+                      {% else %}
+                      <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.profile_picture }}" />
+                      {% endif %}
+                      {{ render_field(comment_form.comment, class='form-control', rows='2', columns='3', placeholder="Write a comment...", required=True) }}
+                      <button class="btn btn-primary" type="submit">Post</button>
+                    </form>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <br/><hr/>
+          {% endfor %}
         {% else %}
-        <div class="col-md-12 profile__header--cover" style="background-image: url('{{ current_user.cover_photo }}')">
+          <br/>
+          <div class="col-md-12">
+            <p class="text-center">You don't seem to have any posts... Why not <a href="{{ url_for('social') }}">make a post!</a></p>
+          </div>
         {% endif %}
-          <div class="col-md-2 offset-md-2"></div>
-          <div class="col-md-3 profile__header--imgwrapper">
-            {% if current_user.profile_picture_upload %}
-              <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
-            {% else %}
-              <img class="img-thumbnail" src="{{ current_user.profile_picture }}" />
-            {% endif %}
-          </div>
-          <div class="col-md-3 profile__header--name">
-            <h3>{{ current_user.fullname }}</h3>
-          </div>
-          <div class="col-md-4 offset-md-6"></div>
-        </div>
       </div>
-
-      <div class="row profile__nav">
-        <div class="col-md-12">
-          <ul class="nav nav-fill">
-            <li class="nav-item active-nav-item">
-              <a class="nav-link" href="{{ url_for('profile') }}">Timeline</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('friends') }}">Friends</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('edit_profile') }}">Edit Profile</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <br/>
-
-      {% if posts|length > 0 %}
-        <!-- posts filter nav -->
-        <div class="row">
-          <div class="offset-md-2"></div>
-          <div class="col-md-4">
-            <button class="btn btn-secondary col-md-12 active" onclick="window.location.href = '{{ url_for('profile', posts='All Posts') }}'">All Posts</button>
-          </div>
-          <div class="col-md-4">
-            <button class="btn btn-secondary col-md-12" onclick="window.location.href = '{{ url_for('profile', posts='Just My Posts') }}'">Just My Posts</button>
-          </div>
-          <div class="offset-md-2"></div>
-        </div>
-
-        {% for post in posts %}
-          <div class="row social__timeline">
-
-            <div class="col-md-7 social__timeline--article" onclick="window.location.href='{{ url_for('show_social_article', postId=post.id) }}'">
-              <div class="card">
-                <img class="card-img-top" src="{{ post.image }}" alt="Card image cap" />
-                <div class="card-body">
-                  <h4 class="card-title">{{ post.title }}</h4>
-                  <p class="card-text">{{ post.description }}</p>
-                </div>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item text-center">Source: {{ post.source }}</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="col-md-5 social__timeline--comments">
-
-              <div class="card post boxshadow">
-                <div class="card-body">
-                  <h4 class="card-title">Posted by {{ User.query.filter_by(id=post.user_id).first().username }} <span class="social__timeline--postdate"> on {{ post.posted_on }}</span></h4>
-                  <p>{{ post.post }}</p>
-                  <hr/>
-                  <div class="row">
-                    <div class="col-md-1"></div>
-                    <div class="col-md-1">
-                      <p>{{ post.num_likes }}</p>
-                    </div>
-                    <form class="col-md-4" method="POST" action="{{ url_for('increment_post_like', postId=post.id) }}">
-                      <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-up"></i> Like</button>
-                    </form>
-                    <div class="col-md-1">
-                      <p>{{ post.num_dislikes }}</p>
-                    </div>
-                    <form class="col-md-4" method="POST" action="{{ url_for('increment_post_dislike', postId=post.id) }}">
-                      <button class="btn btn-primary col-md-12"><i class="fa fa-thumbs-down"></i> Dislike</button>
-                    </form>
-                  </div>
-
-                  <hr/>
-                  <div class="social__timeline--comment-wrapper">
-                  {% for comment in Comment.query.filter_by(post_id=post.id) %}
-                    <div class="comment">
-                      <div class="comment__wrapper">
-                        {% if User.query.filter_by(id=comment.user_id).first().profile_picture_upload %}
-                        <img class="img-thumbnail comment__wrapper--img" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" alt="profile picture" />
-                        {% else %}
-                        <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().profile_picture }}" alt="profile picture" />
-                        {% endif %}
-                        <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().username }}</p>
-                      </div>
-                      <div class="comment__wrapper--comment">
-                        <p>{{ comment.comment }}</p>
-                      </div>
-                    </div>
-                  {% endfor %}
-                  </div>
-                </div>
-
-                <div class="comment__comment-entry">
-                  <hr/>
-                  {% from "_formhelpers.html" import render_field %}
-                  <form class="form-inline" method="POST" action="{{ url_for('comment', postId=post.id) }}">
-                    {{ comment_form.hidden_tag() }}
-                    {% if current_user.profile_picture_upload %}
-                    <img class="img-thumbnail comment__wrapper--img" src="{{ url_for('static', filename='uploads/images/' + current_user.profile_picture_upload) }}" />
-                    {% else %}
-                    <img class="img-thumbnail comment__wrapper--img" src="{{ current_user.profile_picture }}" />
-                    {% endif %}
-                    {{ render_field(comment_form.comment, class='form-control', rows='2', columns='3', placeholder="Write a comment...", required=True) }}
-                    <button class="btn btn-primary" type="submit">Post</button>
-                  </form>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <br/><hr/>
-        {% endfor %}
-      {% else %}
-        <br/>
-        <div class="col-md-12">
-          <p class="text-center">You don't seem to have any posts... Why not <a href="{{ url_for('social') }}">make a post!</a></p>
-        </div>
-      {% endif %}
     </div>
   </div>
-</div>
 {% endblock %}

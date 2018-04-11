@@ -3,7 +3,84 @@
 {% block title %}Index{% endblock %}
 
 {% block content %}
-  <div class="jumbotron">
-    <h1 class="text-center">NewsmarkR</h1>
+  <div class="jumbotron landing__header" style="background-image: url('{{ url_for('static', filename='images/landing_page/header.jpg') }}')">
+    <h1 class="text-center display-3">NewsmarkR</h1>
+    <br/>
+    <h3 class="text-center">The social news sharing platform</h3>
+    <br/>
+    <button class="btn btn-success btn-lg" onclick="window.location.href = '{{ url_for('signup') }}'">Join Now</button>
+  </div>
+
+  <div class="row landing__features">
+    <div class="col-md-12">
+      <div class="container landing__features--content">
+        <h2 class="text-center">Top Features</h2>
+        <p class="text-center">Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Donec id elit non mi porta gravida at eget metus. Donec id elit non mi porta gravida at eget metus. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+        <p class="text-center">Vestibulum id ligula porta felis euismod semper. Nullam id dolor id nibh ultricies vehicula ut id elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id elit non mi porta gravida at eget metus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Sed posuere consectetur est at lobortis.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row landing__dual">
+    <div class="offset-md-1"></div>
+    <div class="col-md-5 landing__dual--item">
+      <h2 class="text-center">Get all of your news in one place.</h2>
+      <br/>
+      <img class="img-thumbnail" src="{{ url_for('static', filename='images/landing_page/all_in_one_place.jpg') }}" alt="Get all of your news in one place." />
+      <br/><br/>
+      <p class="text-center">Vestibulum id ligula porta felis euismod semper. Nullam id dolor id nibh ultricies vehicula ut id elit. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Donec ullamcorper nulla non metus auctor fringilla. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+    </div>
+    <div class="col-md-5 landing__dual--item">
+      <h2 class="text-center">Sculpt your own political opinions.</h2>
+      <br/>
+      <img class="img-thumbnail" src="{{ url_for('static', filename='images/landing_page/sculpt.jpg') }}" alt="Sculpt your own political opinions." />
+      <br/><br/>
+      <p class="text-center">Donec id elit non mi porta gravida at eget metus. Cras mattis consectetur purus sit amet fermentum. Nullam id dolor id nibh ultricies vehicula ut id elit. Donec ullamcorper nulla non metus auctor fringilla.</p>
+    </div>
+    <div class="offset-md-1"></div>
+  </div>
+
+  <div class="row landing__connectivity">
+    <div class="container">
+      <h2 class="text-center">Be connected and share with your friends.</h2>
+      <br/>
+      <img class="img-thumbnail" src="{{ url_for('static', filename='images/landing_page/connectivity.jpg') }}" alt="connectivity" />
+      <br/><br/>
+      <p class="text-center">Curabitur blandit tempus porttitor. Nulla vitae elit libero, a pharetra augue. Cras mattis consectetur purus sit amet fermentum. Nulla vitae elit libero, a pharetra augue. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
+      <p class="text-center">Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Donec ullamcorper nulla non metus auctor fringilla. Sed posuere consectetur est at lobortis. Maecenas faucibus mollis interdum. Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper.</p>
+    </div>
+  </div>
+
+  <div class="row landing__transition align-items-center" style="background-image: url('{{ url_for('static', filename='images/landing_page/transition.jpg') }}')">
+    <div class="col-md-12 landing__transition--content">
+      <br/><br/>
+      <h2 class="text-center display-3">Transition your news to the digital age...</h2>
+      <br/><br/><br/><br/>
+      <div class="row">
+        <br/><br/><br/><br/>
+        <div class="col-md-4">
+          <br/><br/><br/><br/>
+          <h2 class="text-center">Get all your favourite news in one place.</h2>
+          <br/><br/><br/><br/>
+        </div>
+        <div class="col-md-4">
+          <div class="row align-items-center justify-content-center">
+            <br/><br/><br/><br/>
+            <br/><br/><br/><br/>
+            <br/><br/>
+            <button class="btn btn-success btn-lg" onclick="window.location.href = '{{ url_for('signup') }}'">Join Now</button>
+            <br/><br/><br/><br/>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <br/><br/><br/><br/>
+          <h2 class="text-center">Share your opinions with friends.</h2>
+          <br/><br/><br/><br/>
+        </div>
+      </div>
+      <br/><br/><br/><br/>
+      <h2 class="text-center display-3">Sculpt your online political opinion.</h2>
+      <br/><br/><br/><br/>
+    </div>
   </div>
 {% endblock %}
