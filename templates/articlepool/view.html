@@ -51,7 +51,7 @@
             <div class="comment">
               <div class="comment__wrapper">
                 <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().image }}" alt="profile picture" />
-                <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().username }}</p>
+                <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().fullname }}</p>
               </div>
               <div class="comment__wrapper--comment">
                 <p>{{ comment.comment }}</p>

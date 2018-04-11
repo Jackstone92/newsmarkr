@@ -85,7 +85,7 @@
 
                 <div class="card post boxshadow">
                   <div class="card-body">
-                    <h4 class="card-title">Posted by {{ User.query.filter_by(id=post.user_id).first().username }} <span class="social__timeline--postdate"> on {{ post.posted_on }}</span></h4>
+                    <h4 class="card-title">Posted by {{ User.query.filter_by(id=post.user_id).first().fullname }} <span class="social__timeline--postdate"> on {{ post.posted_on }}</span></h4>
                     <p>{{ post.post }}</p>
                     <hr/>
                     <div class="row">
@@ -114,7 +114,7 @@
                           {% else %}
                           <img class="img-thumbnail comment__wrapper--img" src="{{ User.query.filter_by(id=comment.user_id).first().profile_picture }}" alt="profile picture" />
                           {% endif %}
-                          <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().username }}</p>
+                          <p class="comment__wrapper--name">{{ User.query.filter_by(id=comment.user_id).first().fullname }}</p>
                         </div>
                         <div class="comment__wrapper--comment">
                           <p>{{ comment.comment }}</p>
