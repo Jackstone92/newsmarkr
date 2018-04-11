@@ -140,6 +140,7 @@ Or, feel free to create a new account and try things out for yourself!
 
 Here is a table that contains all of NewsmarkR's API endpoints:
 
+
 | Endpoint | Model | URL | Supported Methods |
 | --- | --- | --- |
 | ArticlePool | ArticlePool | http://localhost:5000/api/article_pool | `GET`, `POST`, `PUT`, `DELETE` |
@@ -153,6 +154,7 @@ Here is a table that contains all of NewsmarkR's API endpoints:
 | Post | Social | http://localhost:5000/api/post | `GET`, `POST`, `PUT`, `DELETE` |
 | Comment | Social | http://localhost:5000/api/comment | `GET`, `POST`, `PUT`, `DELETE` |
 | User | User | http://localhost:5000/api/user | `GET`, `POST`, `PUT`, `DELETE` |
+
 
 
 <br/>
