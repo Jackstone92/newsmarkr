@@ -38,7 +38,7 @@ manager = Manager(app)
 # shell commands to reset db
     # from flask_newsmarkr import db
     # db.session.commit()
-    # db.session.drop_all()
+    # db.drop_all()
     # from articlepool.models import *
     # from bookmark.models import *
     # from profile.models import *

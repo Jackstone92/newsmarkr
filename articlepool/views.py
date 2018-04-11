@@ -107,15 +107,15 @@ def share_browse_article(articleTitle):
 def bookmark_browse_article(articleTitle):
     bookmark_url = None
     collectionId = None
+    current_user = User.query.filter_by(username=session['username']).first()
 
     if request.args.get('bookmark_url'):
         bookmark_url = request.args.get('bookmark_url')
 
     # if browse collection doesn't exist, create one
-    if Collection.query.filter_by(name='Browse').first():
-        collectionId = Collection.query.filter_by(name='Browse').first().id
+    if Collection.query.filter_by(user_id=current_user.id, name='Browse').first():
+        collectionId = Collection.query.filter_by(user_id=current_user.id, name='Browse').first().id
     else:
-        current_user = User.query.filter_by(username=session['username']).first()
         collection = Collection(
             'Browse',
             current_user.id,

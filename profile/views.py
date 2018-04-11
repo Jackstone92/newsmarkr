@@ -45,8 +45,9 @@ def profile():
         # else display 'my posts' and friends' posts
         posts = Post.query.filter_by(user_id=current_user.id).order_by('id desc')
         for friend in Friends.query.filter_by(friend_id=current_user.id):
-            friends_posts = Post.query.filter_by(user_id=friend.user_id).order_by('id desc')
-
+            for post in Post.query.filter_by(user_id=friend.user_id).order_by('id desc'):
+                friends_posts.append(post)
+                
         # list comprehension to combine current_user posts and friends_posts posts
         if posts and friends_posts:
             both.append(posts)

@@ -69,22 +69,24 @@
             <br/>
             <div class="row">
               {% for request in pending_requests %}
-                <div class="card col-md-3 boxshadow">
-                  {% if User.query.filter_by(id=request.friend_id).first().profile_picture_upload %}
-                  <img class="card-img-top" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=request.friend_id).first().profile_picture_upload) }}" />
-                  {% else %}
-                  <img class="card-img-top" src="{{ User.query.filter_by(id=request.friend_id).first().profile_picture }}" />
-                  {% endif %}
-                  <div class="card-body text-center">
-                    <h3 class="text-center">{{ User.query.filter_by(id=request.friend_id).first().username }}</h3>
+                <div class="col-md-3">
+                  <div class="card boxshadow">
+                    {% if User.query.filter_by(id=request.friend_id).first().profile_picture_upload %}
+                    <img class="card-img-top" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=request.friend_id).first().profile_picture_upload) }}" />
+                    {% else %}
+                    <img class="card-img-top" src="{{ User.query.filter_by(id=request.friend_id).first().profile_picture }}" />
+                    {% endif %}
+                    <div class="card-body text-center">
+                      <h3 class="text-center">{{ User.query.filter_by(id=request.friend_id).first().username }}</h3>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">
+                        <form action="{{ url_for('cancel_request', userId=current_user.id, friendId=request.friend_id) }}" method="POST" class="col-md-12">
+                          <button class="btn btn-secondary col-md-12" type="submit">Cancel Request</button>
+                        </form>
+                      </li>
+                    </ul>
                   </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                      <form action="{{ url_for('cancel_request', userId=current_user.id, friendId=request.friend_id) }}" method="POST" class="col-md-12">
-                        <button class="btn btn-secondary col-md-12" type="submit">Cancel Request</button>
-                      </form>
-                    </li>
-                  </ul>
                 </div>
               {% endfor %}
             </div>
@@ -98,30 +100,34 @@
             <h3>Friend Requests</h3>
             <br/>
           </div>
-          {% for friend_request in friend_requests %}
-            <div class="card col-md-3 boxshadow">
-              {% if User.query.filter_by(id=friend_request.friend_id).first().profile_picture_upload %}
-              <img class="card-img-top profile__friend-requests--img" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend_request.friend_id).first().profile_picture_upload) }}" />
-              {% else %}
-              <img class="card-img-top profile__friend-requests--img" src="{{ User.query.filter_by(id=friend_request.friend_id).first().profile_picture }}" />
-              {% endif %}
-              <div class="card-body text-center">
-                <h3>{{ User.query.filter_by(id=friend_request.friend_id).first().fullname }}</h3>
+          <div class="row">
+            {% for friend_request in friend_requests %}
+              <div class="col-md-3">
+                <div class="card boxshadow">
+                  {% if User.query.filter_by(id=friend_request.friend_id).first().profile_picture_upload %}
+                  <img class="card-img-top profile__friend-requests--img" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend_request.friend_id).first().profile_picture_upload) }}" />
+                  {% else %}
+                  <img class="card-img-top profile__friend-requests--img" src="{{ User.query.filter_by(id=friend_request.friend_id).first().profile_picture }}" />
+                  {% endif %}
+                  <div class="card-body text-center">
+                    <h3>{{ User.query.filter_by(id=friend_request.friend_id).first().fullname }}</h3>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      <form action="{{ url_for('accept_friend', userId=current_user.id, friendId=friend_request.friend_id) }}" method="POST" class="col-md-12">
+                        <button class="btn btn-success col-md-12" type="submit">Accept</button>
+                      </form>
+                    </li>
+                    <li class="list-group-item">
+                      <form action="{{ url_for('ignore_friend', userId=current_user.id, friendId=friend_request.friend_id) }}" method="POST" class="col-md-12">
+                        <button class="btn btn-secondary col-md-12" type="submit">Ignore</button>
+                      </form>
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                  <form action="{{ url_for('accept_friend', userId=current_user.id, friendId=friend_request.friend_id) }}" method="POST" class="col-md-12">
-                    <button class="btn btn-success col-md-12" type="submit">Accept</button>
-                  </form>
-                </li>
-                <li class="list-group-item">
-                  <form action="{{ url_for('ignore_friend', userId=current_user.id, friendId=friend_request.friend_id) }}" method="POST" class="col-md-12">
-                    <button class="btn btn-secondary col-md-12" type="submit">Ignore</button>
-                  </form>
-                </li>
-              </ul>
-            </div>
-          {% endfor %}
+            {% endfor %}
+          </div>
         {% endif %}
       </div>
 
@@ -149,17 +155,25 @@
         {% if friends.count() > 0 %}
           {% for friend in friends %}
             <div class="col-md-3">
-              {% if User.query.filter_by(id=friend.friend_id).profile_picture_upload %}
-              <img class="img-thumbnail" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend.user_id).first().profile_picture_upload) }}" />
-              {% else %}
-              <img class="img-thumbnail" src="{{ User.query.filter_by(id=friend.friend_id).first().profile_picture }}" />
-              {% endif %}
-              <h3 class="text-center">{{ User.query.filter_by(id=friend.friend_id).first().fullname }}</h3>
-              {% if edit_status_friends == True %}
-              <form action="{{ url_for('delete_friend', userId=current_user.id, friendId=friend.friend_id) }}" method="POST" class="col-md-12">
-                <button class="btn btn-danger col-md-12" type="submit">Delete Friend</button>
-              </form>
-              {% endif %}
+              <div class="card">
+                {% if User.query.filter_by(id=friend.friend_id).profile_picture_upload %}
+                <img class="card-img-top" src="{{ url_for('static', filename='uploads/images' + User.query.filter_by(id=friend.user_id).first().profile_picture_upload) }}" />
+                {% else %}
+                <img class="card-img-top" src="{{ User.query.filter_by(id=friend.friend_id).first().profile_picture }}" />
+                {% endif %}
+                <div class="card-body text-center">
+                  <h3 class="text-center">{{ User.query.filter_by(id=friend.friend_id).first().fullname }}</h3>
+                </div>
+                {% if edit_status_friends == True %}
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <form action="{{ url_for('delete_friend', userId=current_user.id, friendId=friend.friend_id) }}" method="POST" class="col-md-12">
+                      <button class="btn btn-danger col-md-12" type="submit">Delete Friend</button>
+                    </form>
+                  </li>
+                </ul>
+                {% endif %}
+              </div>
             </div>
           {% endfor %}
         {% else %}

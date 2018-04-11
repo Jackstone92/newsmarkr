@@ -36,7 +36,8 @@ def social():
 
     posts = Post.query.filter_by(user_id=current_user.id).order_by('id desc')
     for friend in Friends.query.filter_by(friend_id=current_user.id):
-        friends_posts = Post.query.filter_by(user_id=friend.user_id).order_by('id desc')
+        for post in Post.query.filter_by(user_id=friend.user_id).order_by('id desc'):
+            friends_posts.append(post)
 
     # list comprehension to combine current_user posts and friends_posts posts
     if posts and friends_posts:
@@ -92,8 +93,8 @@ def social_post():
 
             if meta:
                 # find or create 'Posts' collection
-                if Collection.query.filter_by(name='Posts').first():
-                    collection = Collection.query.filter_by(name='Posts').first()
+                if Collection.query.filter_by(user_id=current_user.id, name='Posts').first():
+                    collection = Collection.query.filter_by(user_id=current_user.id, name='Posts').first()
                 else:
                     collection = Collection(
                         'Posts',
