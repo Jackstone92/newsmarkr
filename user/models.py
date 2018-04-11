@@ -1,7 +1,10 @@
 # database operations
 
 # must import main db
-from flask_newsmarkr import db
+from flask_newsmarkr import db, login_manager
+
+# from flask_login
+from flask_login import UserMixin
 
 # in order to add tables to database:
     # in terminal, type 'python manage.py shell'
@@ -29,13 +32,13 @@ from flask_newsmarkr import db
     # drop all tables: 'db.drop_all()'
 
 # when sqlalchemy runs, it maps the columns to the properties of this class
-class User(db.Model):
+class User(UserMixin, db.Model):
     # id is autoincrementing number, that increases with each new record
     id = db.Column(db.Integer, primary_key=True)
     fullname = db.Column(db.String(80))
-    email = db.Column(db.String(35), unique=True) # want only one user with same email per table
-    username = db.Column(db.String(80), unique=True) # want only one user with same username per table
-    password = db.Column(db.String(60)) # 60 chars for bcrypt hashed password standard
+    email = db.Column(db.String(50), unique=True) # want only one user with same email per table
+    username = db.Column(db.String(25), unique=True) # want only one user with same username per table
+    password = db.Column(db.String(80))
     profile_picture = db.Column(db.String(256))
     profile_picture_upload = db.Column(db.String(256))
     cover_photo = db.Column(db.String(256))
@@ -64,3 +67,8 @@ class User(db.Model):
     # representation - how do you want to display this when interacting with it in, say, the terminal?
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

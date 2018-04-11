@@ -1,18 +1,14 @@
 # import app from root (from __init__.py)
 from flask_newsmarkr import app
 from flask import render_template, redirect, url_for, session, request, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, logout_user, login_required, current_user
 
 from flask_newsmarkr import db
 # import login and signup forms from form.py
 from user.form import SignupForm, LoginForm
 # user.models to check in database
 from user.models import User
-
-# import bcrypt to unhash password
-import bcrypt
-
-# import custom decorators
-from user.decorators import login_required
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -35,12 +31,15 @@ def login():
 
         # if user record found with username
         if user:
-            # if encrypted form password is same hash as hashed author password on database, we have found the right user
-            if bcrypt.hashpw(form.password.data, user.password) == user.password:
+            # using werkzeug.security
+            if check_password_hash(user.password, form.password.data):
+                # flask_login
+                login_user(user, remember=True)
                 # create flask login session
                 session['username'] = form.username.data
                 # store is_admin flag in session
-                session['is_admin'] = user.is_admin
+                if user.is_admin:
+                    session['is_admin'] = user.is_admin
                 # if have 'next' url in session -> navigate to next after login
                 if 'next' in session:
                     next = session.get('next')
@@ -64,9 +63,8 @@ def signup():
     error = None
     # check form was submitted - checks that form didn't have any errors (from validators)
     if form.validate_on_submit():
-        # generate salt (random hash used to generate new password)
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(form.password.data, salt)
+        # using werkzeug.security
+        hashed_password = generate_password_hash(form.password.data, method='sha256')
 
         # create a user from those form records
         user = User(
@@ -104,6 +102,8 @@ def signup():
 @app.route('/logout')
 @login_required
 def logout():
+    # flask_login
+    logout_user()
     session.pop('username')
     session.pop('is_admin')
     return redirect(url_for('index'))

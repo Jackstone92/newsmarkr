@@ -1,5 +1,6 @@
 from flask_newsmarkr import app
 from flask import render_template, redirect, flash, url_for, session, abort, request
+from flask_login import login_required, current_user
 
 # for uploaded file deletion
 import os
@@ -12,9 +13,6 @@ from flask_newsmarkr import db, uploaded_images
 from user.models import User
 from bookmark.models import Collection, Bookmark, Category
 from social.models import Post
-
-# import custom decorators
-from user.decorators import login_required
 
 # import python-slugify for slug generation
 from slugify import slugify
@@ -50,7 +48,6 @@ def library():
     # implement search functionality
 
     # get all collections
-    current_user = User.query.filter_by(username=session['username']).first()
     collections = Collection.query.filter_by(user_id=current_user.id)
 
     return render_template('bookmark/library.html', form=form, collections=collections, error=error)
@@ -60,8 +57,6 @@ def library():
 @login_required
 def add_collection():
     """ Library method to add new collection """
-    # get current user
-    current_user = User.query.filter_by(username=session['username']).first()
     # create new collection
     collection = Collection(
         'New Collection',
@@ -113,7 +108,6 @@ def collection(collectionId):
         session['edit_bookmark_status'] = False
 
     # get all bookmarks in library
-    current_user = User.query.filter_by(username=session['username']).first()
     collection = Collection.query.filter_by(id=collectionId).first()
     if current_user and collection:
         bookmarks = Bookmark.query.filter_by(collection_id=collectionId).order_by('id desc')
@@ -231,7 +225,6 @@ def scrape(collectionId):
         error = request.args.get('error')
     else:
         error = None
-    current_user = User.query.filter_by(username=session['username']).first()
 
     if request.args.get('bookmark_url'):
         url_to_scrape = request.args.get('bookmark_url')

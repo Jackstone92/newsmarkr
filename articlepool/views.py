@@ -1,5 +1,6 @@
 from flask_newsmarkr import app
 from flask import render_template, redirect, flash, url_for, session, abort, request
+from flask_login import login_required, current_user
 
 from datetime import datetime
 
@@ -17,22 +18,17 @@ from articlepool.form import LiveCommentForm
 
 from utils.scrape import article_meta_scrape, article_content_scrape, bbc_article_content_scrape
 
-# import custom decorators
-from user.decorators import login_required
-
-
 # dictionary of rss feed urls
 RSS_FEEDS = {
-                'bbc': 'http://feeds.bbci.co.uk/news/rss.xml'
-                # 'sky_home': 'http://feeds.skynews.com/feeds/rss/home.xml',
-                # 'cnn': 'http://rss.cnn.com/rss/edition.rss'
-            }
+    'bbc': 'http://feeds.bbci.co.uk/news/rss.xml'
+    # 'sky_home': 'http://feeds.skynews.com/feeds/rss/home.xml',
+    # 'cnn': 'http://rss.cnn.com/rss/edition.rss'
+}
 
 
 @app.route('/browse-headlines', methods=['GET'])
 @login_required
 def browse():
-    current_user = User.query.filter_by(username=session['username']).first()
     meta = None
     article_pool = None
 
@@ -84,7 +80,6 @@ def browse():
 def view_browse_article(articleId):
     # TODO: fix 'post' in view.html
     article_pool = ArticlePool.query.filter_by(id=articleId).first()
-    current_user = User.query.filter_by(username=session['username']).first()
     live_comment_form = LiveCommentForm()
 
     # determine which scraping tools to use
@@ -116,7 +111,6 @@ def share_browse_article(articleTitle):
 def bookmark_browse_article(articleTitle):
     bookmark_url = None
     collectionId = None
-    current_user = User.query.filter_by(username=session['username']).first()
 
     if request.args.get('bookmark_url'):
         bookmark_url = request.args.get('bookmark_url')
@@ -164,7 +158,6 @@ def increment_browse_dislike(articleId):
 @app.route('/browse-headlines/<articleId>/comment', methods=['POST'])
 @login_required
 def browse_comment(articleId):
-    current_user = User.query.filter_by(username=session['username']).first()
     live_comment_form = LiveCommentForm()
 
     if live_comment_form.validate_on_submit():

@@ -1,5 +1,6 @@
 from flask_newsmarkr import app
 from flask import render_template, redirect, flash, url_for, session, abort, request
+from flask_login import login_required, current_user
 
 # import python-slugify for slug generation
 from slugify import slugify
@@ -19,15 +20,10 @@ from social.form import PostForm, CommentForm
 # import scrape helper function
 from utils.scrape import article_meta_scrape, bbc_article_content_scrape
 
-# import custom decorators
-from user.decorators import login_required
-
-
 
 @app.route('/social-feed', methods=['GET', 'POST'])
 @login_required
 def social():
-    current_user = User.query.filter_by(username=session['username']).first()
     form = PostForm()
     comment_form = CommentForm()
     share_url = None
@@ -61,7 +57,6 @@ def social():
 @login_required
 def show_social_article(postId):
     """ Social-Feed display page """
-    current_user = User.query.filter_by(username=session['username']).first()
     comment_form = CommentForm()
     post = Post.query.filter_by(id=postId).first()
     article = None
@@ -82,7 +77,6 @@ def show_social_article(postId):
 def social_post():
     form = PostForm()
     bookmark = None
-    current_user = User.query.filter_by(username=session['username']).first()
 
     if form.validate_on_submit():
         form_url = form.url.data
@@ -126,7 +120,6 @@ def social_post():
                     source = meta['source']
                     slug = slugify(title)
                     published_on = datetime.utcnow()
-                    # TODO: implement proper categories
                     if Category.query.filter_by(name='Posts').first():
                         category = Category.query.filter_by(name='Posts').first()
                     else:
@@ -182,7 +175,6 @@ def social_post():
 @app.route('/social-feed/<postId>/comment', methods=['POST'])
 @login_required
 def comment(postId):
-    current_user = User.query.filter_by(username=session['username']).first()
     comment_form = CommentForm()
 
     if comment_form.validate_on_submit():

@@ -1,5 +1,6 @@
 from flask_newsmarkr import app
 from flask import render_template, redirect, flash, url_for, session, abort, request
+from flask_login import login_required, current_user
 
 import os
 from settings import UPLOADED_IMAGES_DEST
@@ -21,16 +22,12 @@ from user.models import User
 # functions for obtaining profile stats
 from utils.statistics import total_num_posts, total_num_comments, total_num_friends, total_num_collections, total_num_bookmarks_not_posts
 
-# import custom decorators
-from user.decorators import login_required
-
 
 @app.route('/profile', methods=['GET', 'POST'])
 @app.route('/profile/timeline', methods=['GET', 'POST'])
 @login_required
 def profile():
     # timeline view
-    current_user = User.query.filter_by(username=session['username']).first()
     comment_form = CommentForm()
     friends_posts = []
     both = []
@@ -66,7 +63,6 @@ def profile():
 @login_required
 def about():
     # about view
-    current_user = User.query.filter_by(username=session['username']).first()
     profile = Profile.query.filter_by(user_id=current_user.id).first()
     display_profile = {}
     # get profile content from constants to render in template
@@ -96,7 +92,6 @@ def about():
 def friends():
     # friends view
     add_friends_form = AddFriendsForm()
-    current_user = User.query.filter_by(username=session['username']).first()
     friends = Friends.query.filter_by(user_id=current_user.id)
     pending_requests = FriendRequest.query.filter_by(user_id=current_user.id, user_accepted=True, friend_accepted=False, user_ignored=False, friend_ignored=False)
     friend_requests = FriendRequest.query.filter_by(user_id=current_user.id, user_accepted=False, friend_accepted=True, user_ignored=False, friend_ignored=False)
@@ -115,7 +110,6 @@ def friends():
 @login_required
 def add_friend():
     add_friends_form = AddFriendsForm()
-    current_user = User.query.filter_by(username=session['username']).first()
 
     if add_friends_form.validate_on_submit():
         username = add_friends_form.username.data
@@ -278,7 +272,6 @@ def delete_friend(userId, friendId):
 @login_required
 def edit_profile():
     # edit profile view
-    current_user = User.query.filter_by(username=session['username']).first()
     edit_cover_photo_form = EditCoverPhoto()
     edit_profile_picture_form = EditProfilePicture()
     edit_about_form = EditAbout()
@@ -311,7 +304,6 @@ def edit_profile_picture():
             flash('The image was not uploaded')
 
         if profile_picture or profile_picture_upload:
-            current_user = User.query.filter_by(username=session['username']).first()
             # if image, use that rather than filename
             if profile_picture and current_user.profile_picture != profile_picture:
                 current_user.profile_picture_upload = None
@@ -343,7 +335,6 @@ def edit_cover_photo():
             flash('The image was not uploaded')
 
         if cover_photo or cover_photo_upload:
-            current_user = User.query.filter_by(username=session['username']).first()
             # if image, use that rather than filename
             if cover_photo and current_user.cover_photo != cover_photo:
                 current_user.cover_photo_upload = None

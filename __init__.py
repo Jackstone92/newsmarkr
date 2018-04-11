@@ -9,6 +9,8 @@ from flask_migrate import Migrate
 from flaskext.markdown import Markdown
 # import flask-uploads
 from flask_uploads import UploadSet, configure_uploads, IMAGES
+# import flask-login
+from flask_login import LoginManager, UserMixin
 
 
 app = Flask(__name__)
@@ -21,6 +23,10 @@ db = SQLAlchemy(app)
 # pass app and db
 migrate = Migrate(app, db)
 
+# flask-login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
 
 # Markdown
 Markdown(app)
