@@ -1,10 +1,10 @@
 # import app from root (from __init__.py)
-from flask-newsmarkr import app
+from flask_newsmarkr import app
 from flask import render_template, redirect, url_for, session, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 
-from flask-newsmarkr import db
+from flask_newsmarkr import db
 # import login and signup forms from form.py
 from user.form import SignupForm, LoginForm
 # user.models to check in database

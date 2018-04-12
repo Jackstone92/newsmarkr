@@ -1,19 +1,19 @@
 # database operations
 
 # must import main db
-from flask-newsmarkr import db, login_manager
+from flask_newsmarkr import db, login_manager
 
 # from flask_login
 from flask_login import UserMixin
 
 # in order to add tables to database:
     # in terminal, type 'python manage.py shell'
-    # import db into shell: 'from flask-newsmarkr import db'
+    # import db into shell: 'from flask_newsmarkr import db'
     # import user models into shell: 'from user.models import *'
     # create database by calling 'db.create_all()'
 
 # to add instance of user using 'python manage.py shell':
-    # 'from flask-newsmarkr import db'
+    # 'from flask_newsmarkr import db'
     # 'from user.models import *'
     # 'user = User('Jack Stone', 'test@test.com', 'jack', '12345', True)'
     # 'user' -> repr -> <User jack>

@@ -1,4 +1,4 @@
-from flask-newsmarkr import db
+from flask_newsmarkr import db
 from datetime import datetime
 
 class Collection(db.Model):
