@@ -1,4 +1,4 @@
-from flask_newsmarkr import db
+from flask-newsmarkr import db
 from datetime import datetime
 
 class ArticlePool(db.Model):

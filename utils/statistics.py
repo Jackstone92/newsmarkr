@@ -1,4 +1,4 @@
-from flask_newsmarkr import db
+from flask-newsmarkr import db
 from bookmark.models import Collection, Bookmark, Category
 from social.models import Post, Comment
 from profile.models import Friends

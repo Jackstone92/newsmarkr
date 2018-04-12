@@ -1,6 +1,6 @@
 # Term 2 Data Networks and the Web Final Project:
 
-### Flask_NewsmarkR - A Social News Sharing Platform
+### flask-newsmarkr - A Social News Sharing Platform
 ##### Main Submission Repo: http://gitlab.doc.gold.ac.uk/jston010/dnw-term2-project
 ##### Live server URL: http://doc.gold.ac.uk/usr/122
 
@@ -104,7 +104,7 @@ Or, feel free to create a new account and try things out for yourself!
 <div id="how-to-run-the-app-locally" />
 ## How to run the app locally
 1. Clone the repo
-2. Rename the repo folder to `flask_newsmarkr`
+2. Rename the repo folder to `flask-newsmarkr`
 3. Ensure you have the correct database:
   - Log into mysql with the following user credentials:
     - `mysql -u newsmarkr -p` with the password `newsmarkr`
@@ -114,7 +114,7 @@ Or, feel free to create a new account and try things out for yourself!
 6. Enter the following commands to reset the database:
 
 ```python
-from flask_newsmarkr import db # import database
+from flask-newsmarkr import db # import database
 db.session.commit() # need to commit before dropping all tables
 db.drop_all() # drop all tables
 # import all sqlalchemy models

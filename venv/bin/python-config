@@ -1,4 +1,4 @@
-#!/Users/jacksimac/Developer/Projects/flask-newsmarkr/flask_newsmarkr/venv/bin/python
+#!/Users/jacksimac/Developer/Projects/flask-newsmarkr/flask-newsmarkr/venv/bin/python
 
 import sys
 import getopt

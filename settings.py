@@ -18,6 +18,6 @@ SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # for flask-uploads
 # where images are saved on server (print pwd to get directory!)
-UPLOADED_IMAGES_DEST = '/Users/jacksimac/Developer/Projects/flask-newsmarkr/flask_newsmarkr/static/uploads/images'
+UPLOADED_IMAGES_DEST = '/Users/jacksimac/Developer/Projects/flask-newsmarkr/flask-newsmarkr/static/uploads/images'
 # how you serve images - prepend to images served
 UPLOADED_IMAGES_URL = '/static/uploads/images/'

@@ -40,7 +40,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/jacksimac/Developer/Projects/flask-newsmarkr/flask_newsmarkr/venv"
+VIRTUAL_ENV="/Users/jacksimac/Developer/Projects/flask-newsmarkr/flask-newsmarkr/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

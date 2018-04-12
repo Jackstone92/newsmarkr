@@ -11,9 +11,9 @@ from flask_migrate import MigrateCommand
 # import flask-restless for api
 import flask_restless
 # import database
-from flask_newsmarkr import db
+from flask-newsmarkr import db
 # import app
-from flask_newsmarkr import app
+from flask-newsmarkr import app
 
 # import models for endpoints
 from articlepool.models import ArticlePool, LiveComment
@@ -37,7 +37,7 @@ manager = Manager(app)
 
 
 # shell commands to reset db
-    # from flask_newsmarkr import db
+    # from flask-newsmarkr import db
     # db.session.commit()
     # db.drop_all()
     # from articlepool.models import *

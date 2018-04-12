@@ -1,4 +1,4 @@
-from flask_newsmarkr import app
+from flask-newsmarkr import app
 from flask import render_template, redirect, flash, url_for, session, abort, request
 from flask_login import login_required, current_user
 
@@ -9,7 +9,7 @@ from settings import UPLOADED_IMAGES_DEST
 from datetime import datetime
 
 from bookmark.form import SearchForm, ScrapeForm, EditForm
-from flask_newsmarkr import db, uploaded_images
+from flask-newsmarkr import db, uploaded_images
 from user.models import User
 from bookmark.models import Collection, Bookmark, Category
 from social.models import Post

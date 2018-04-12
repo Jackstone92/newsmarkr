@@ -1,4 +1,4 @@
-from flask_newsmarkr import app
+from flask-newsmarkr import app
 from flask import render_template, redirect, flash, url_for, session, abort, request
 from flask_login import login_required, current_user
 
@@ -10,7 +10,7 @@ import feedparser
 # import python-slugify for slug generation
 from slugify import slugify
 
-from flask_newsmarkr import db
+from flask-newsmarkr import db
 from user.models import User
 from bookmark.models import Collection, Bookmark
 from articlepool.models import ArticlePool, LiveComment

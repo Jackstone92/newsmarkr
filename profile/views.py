@@ -1,4 +1,4 @@
-from flask_newsmarkr import app
+from flask-newsmarkr import app
 from flask import render_template, redirect, flash, url_for, session, abort, request
 from flask_login import login_required, current_user
 
@@ -9,7 +9,7 @@ from datetime import datetime
 # geocoder for ip location detection
 import geocoder
 
-from flask_newsmarkr import db, uploaded_images
+from flask-newsmarkr import db, uploaded_images
 
 from social.models import Post, Comment
 from social.form import CommentForm
