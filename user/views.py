@@ -10,8 +10,6 @@ from user.form import SignupForm, LoginForm
 # user.models to check in database
 from user.models import User
 
-from utils.vs_url_for import vs_url_for
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -49,7 +47,7 @@ def login():
                     return redirect(next)
                 else:
                     # go straight to index
-                    return redirect(vs_url_for('social'))
+                    return redirect(url_for('social'))
             else:
                 error = "Incorrect username and password"
         else:
@@ -75,9 +73,9 @@ def signup():
             form.email.data,
             form.username.data,
             hashed_password,
-            str(vs_url_for('static', filename='images/profile_picture.png')),
+            str(url_for('static', filename='images/profile_picture.png')),
             None,
-            str(vs_url_for('static', filename='images/newspaper.jpg')),
+            str(url_for('static', filename='images/newspaper.jpg')),
             None,
             True
         )
@@ -90,7 +88,7 @@ def signup():
             # actually commit transaction to database
             db.session.commit()
             # redirect to user login
-            return redirect(vs_url_for('login'))
+            return redirect(url_for('login'))
         else:
             # undo flush by rollback()
             db.session.rollback()
@@ -108,4 +106,4 @@ def logout():
     logout_user()
     session.pop('username')
     session.pop('is_admin')
-    return redirect(vs_url_for('index'))
+    return redirect(url_for('index'))
