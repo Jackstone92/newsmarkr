@@ -51,7 +51,7 @@ manager.add_command('db', MigrateCommand)
 # add 'runserver' command to start server
 # 'python manage.py runserver'
 manager.add_command('runserver', Server(
-    use_debugger = True,
+    use_debugger = False,
     use_reloader = True,
     host = os.getenv('IP', '0.0.0.0'),
     port = int(os.getenv('PORT', 5000))
