@@ -33,6 +33,7 @@ from flask_login import UserMixin
 
 # when sqlalchemy runs, it maps the columns to the properties of this class
 class User(UserMixin, db.Model):
+    """ Model for user """
     # id is autoincrementing number, that increases with each new record
     id = db.Column(db.Integer, primary_key=True)
     fullname = db.Column(db.String(80))

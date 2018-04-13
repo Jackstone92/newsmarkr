@@ -13,6 +13,7 @@ from user.models import User
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """ Handle login process """
     form = LoginForm()
     error = None
 
@@ -57,6 +58,7 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    """ Handle signup process """
     # instantiate form
     form = SignupForm()
     # set up blank error
@@ -102,6 +104,7 @@ def signup():
 @app.route('/logout')
 @login_required
 def logout():
+    """ Handle logout process """
     # flask_login
     logout_user()
     session.pop('username')

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <div class="jumbotron">
+    <form class='form-horizontal' method="post">
+      {{ form.csrf_token }}
+
+      <div class='form-group'>
+        <div class='col-md-6'>
+          {% if form.username.errors %}
+            <ul class='errors'>
+              {% for error in form.username.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          {{ form.username(class='form-control',placeholder='username') }}
+        </div>
+      </div>
+      <div class='form-group'>
+        <div class='col-md-6'>
+          {% if form.password.errors %}
+            <ul class='errors'>
+              {% for error in form.password.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          {{
+          form.password(class='form-control',placeholder='password') }}
+        </div>
+      </div>
+      <div class='form-group'>
+        <div class='col-md-6'>
+          {% if form.password2.errors %}
+            <ul class='errors'>
+              {% for error in form.password2.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          {{ form.password2(class='form-control',placeholder='confirm password') }}
+        </div>
+      </div>
+      <div class='form-group'>
+        <div class='col-md-6'>
+          {{ form.submit(class='btn btn-primary btn-block') }}
+        </div>
+      </div>
+    </form>
+  </div >
+{% endblock %}

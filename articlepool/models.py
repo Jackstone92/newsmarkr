@@ -2,6 +2,7 @@ from flask_newsmarkr import db
 from datetime import datetime
 
 class ArticlePool(db.Model):
+    """ Model for Browse Headlines articles"""
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(256))
     title = db.Column(db.String(256))
@@ -35,6 +36,7 @@ class ArticlePool(db.Model):
 
 
 class LiveComment(db.Model):
+    """ Model for ArticlePool comments """
     id = db.Column(db.Integer, primary_key=True)
     article_pool_id = db.Column(db.Integer, db.ForeignKey('article_pool.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

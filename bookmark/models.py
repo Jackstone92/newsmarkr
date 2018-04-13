@@ -2,6 +2,7 @@ from flask_newsmarkr import db
 from datetime import datetime
 
 class Collection(db.Model):
+    """ Model for collection of bookmarks """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     name = db.Column(db.String(80))
@@ -26,6 +27,7 @@ class Collection(db.Model):
 
 
 class Bookmark(db.Model):
+    """ Model for bookmark """
     id = db.Column(db.Integer, primary_key=True)
     collection_id = db.Column(db.Integer, db.ForeignKey('collection.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -67,6 +69,7 @@ class Bookmark(db.Model):
 
 
 class Category(db.Model):
+    """ Model for bookmark category """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
 

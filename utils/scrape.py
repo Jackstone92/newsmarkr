@@ -4,6 +4,7 @@ import requests
 from datetime import datetime
 
 def article_meta_scrape(current_user, url):
+    """ Scrapes the metadata from an article using BeautifulSoup4 """
     # web scrape
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
@@ -25,6 +26,7 @@ def article_meta_scrape(current_user, url):
     return meta
 
 def article_content_scrape(url):
+    """ Scrapes the article's content using BeautifulSoup4 """
     # web scrape
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml').prettify()
@@ -33,6 +35,7 @@ def article_content_scrape(url):
 
 
 def bbc_article_content_scrape(url):
+    """ Scrapes BBC article content using BeautifulSoup4 """
     # web scrape
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
@@ -43,7 +46,3 @@ def bbc_article_content_scrape(url):
         return soup.prettify()
 
     return soup.get_text()
-    # TODO:
-    # get images and format
-    # get header tags and format
-    # get content and format

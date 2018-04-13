@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <div class="jumbotron">
+    {% for twit in twits %}
+      <div class="row">
+        <div class="col-md-4">{{ twit.user.username }}</div>
+        <div class="col-md-4">{{ twit.twit }}</div>
+        <div class="col-md-4">
+          <a href='/edit_twit?id={{ twit.twit_id }}'> edit </a>
+          <a href='/delete_twit?id={{ twit.twit_id }}'> delete </a>
+        </div>
+     </div>
+     <div class="row">&nbsp;</div>
+    {% endfor %}
+  </div>
+{% endblock %}

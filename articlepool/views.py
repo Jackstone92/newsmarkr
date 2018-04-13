@@ -26,9 +26,10 @@ RSS_FEEDS = {
 }
 
 
-@app.route('/browse-headlines', methods=['GET'])
+@app.route('/browse-headlines', methods=['GET', 'POST'])
 @login_required
 def browse():
+    """ Browse Headlines page, displaying scraped headlines from rss feeds as ArticlePool """
     meta = None
     article_pool = None
 
@@ -78,7 +79,7 @@ def browse():
 @app.route('/browse-headlines/<articleId>', methods=['GET'])
 @login_required
 def view_browse_article(articleId):
-    # TODO: fix 'post' in view.html
+    """ Displays view for ArticlePool """
     article_pool = ArticlePool.query.filter_by(id=articleId).first()
     live_comment_form = LiveCommentForm()
 
@@ -109,6 +110,7 @@ def share_browse_article(articleTitle):
 @app.route('/browse-headlines/<articleTitle>/bookmark', methods=['POST'])
 @login_required
 def bookmark_browse_article(articleTitle):
+    """ Adds ArticlePool as bookmark """
     bookmark_url = None
     collectionId = None
 
@@ -138,7 +140,7 @@ def bookmark_browse_article(articleTitle):
 @app.route('/browse-headlines/<articleId>/like', methods=['POST'])
 @login_required
 def increment_browse_like(articleId):
-    """ Social-Feed Post method to increment number of likes """
+    """ ArticlePool Post method to increment number of likes """
     article_pool = ArticlePool.query.filter_by(id=articleId).first()
     article_pool.likes += 1
     db.session.commit()
@@ -148,7 +150,7 @@ def increment_browse_like(articleId):
 @app.route('/browse-headlines/<articleId>/dislike', methods=['POST'])
 @login_required
 def increment_browse_dislike(articleId):
-    """ Social-Feed Post method to increment number of dislikes """
+    """ ArticlePool Post method to increment number of dislikes """
     article_pool = ArticlePool.query.filter_by(id=articleId).first()
     article_pool.dislikes += 1
     db.session.commit()
@@ -158,6 +160,7 @@ def increment_browse_dislike(articleId):
 @app.route('/browse-headlines/<articleId>/comment', methods=['POST'])
 @login_required
 def browse_comment(articleId):
+    """ ArticlePool Post method to add LiveComment """
     live_comment_form = LiveCommentForm()
 
     if live_comment_form.validate_on_submit():
@@ -171,10 +174,6 @@ def browse_comment(articleId):
         )
 
         db.session.add(live_comment)
-        db.session.flush()
-
-        # TODO: increment num_comments
-
         db.session.commit()
 
     return redirect(url_for('view_browse_article', articleId=articleId))

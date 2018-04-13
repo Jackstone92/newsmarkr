@@ -25,8 +25,8 @@ from utils.scrape import article_meta_scrape, bbc_article_content_scrape
 #                            Index                               #
 #                                                                #
 # ============================================================== #
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     """ Main index page """
     return render_template('index.html')
@@ -201,6 +201,7 @@ def delete_collection(collectionId):
 @app.route('/library/<collectionId>/delete-bookmark', methods=['POST'])
 @login_required
 def delete_bookmark(collectionId):
+    """ Bookmark post method to delete a bookmark """
     # get bookmarkId from request
     bookmarkId = request.args.get('bookmarkId')
     # bookmark that should be deleted
@@ -237,9 +238,6 @@ def scrape(collectionId):
         meta = None
 
     bookmark = None
-
-    # TODO: throw error if already a bookmark
-    # TODO: implement proper categories
 
     if meta:
         # set up temp category for bookmark

@@ -23,10 +23,16 @@ from user.models import User
 from utils.statistics import total_num_posts, total_num_comments, total_num_friends, total_num_collections, total_num_bookmarks_not_posts
 
 
+# ============================================================== #
+#                                                                #
+#                          Timeline                              #
+#                                                                #
+# ============================================================== #
 @app.route('/profile', methods=['GET', 'POST'])
 @app.route('/profile/timeline', methods=['GET', 'POST'])
 @login_required
 def profile():
+    """ Displays profile timeline view """
     # timeline view
     comment_form = CommentForm()
     friends_posts = []
@@ -59,9 +65,16 @@ def profile():
         return render_template('profile/timeline.html', comment_form=comment_form, posts=combined_posts, Comment=Comment, User=User, current_user=current_user, Friends=Friends)
 
 
+
+# ============================================================== #
+#                                                                #
+#                            About                               #
+#                                                                #
+# ============================================================== #
 @app.route('/profile/about', methods=['GET', 'POST'])
 @login_required
 def about():
+    """ Displays profile about view """
     # about view
     profile = Profile.query.filter_by(user_id=current_user.id).first()
     display_profile = {}
@@ -87,9 +100,16 @@ def about():
     return render_template('profile/about.html', current_user=current_user, profile=display_profile, statistics=statistics, FAVOURITE_NEWS_WEBSITES=FAVOURITE_NEWS_WEBSITES, NEWS_WEBSITE_LINKS=NEWS_WEBSITE_LINKS)
 
 
+
+# ============================================================== #
+#                                                                #
+#                           Friends                              #
+#                                                                #
+# ============================================================== #
 @app.route('/profile/friends', methods=['GET', 'POST'])
 @login_required
 def friends():
+    """ Displays profile friends view """
     # friends view
     add_friends_form = AddFriendsForm()
     friends = Friends.query.filter_by(user_id=current_user.id)
@@ -109,6 +129,7 @@ def friends():
 @app.route('/profile/friends/add-friend', methods=['POST'])
 @login_required
 def add_friend():
+    """ Profile post method to make friend request """
     add_friends_form = AddFriendsForm()
 
     if add_friends_form.validate_on_submit():
@@ -154,6 +175,7 @@ def add_friend():
 @app.route('/profile/friends/accept-friend/<userId>/<friendId>', methods=['POST'])
 @login_required
 def accept_friend(userId, friendId):
+    """ Profile post method to accept friend request """
     request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId).first()
     request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId).first()
 
@@ -191,6 +213,7 @@ def accept_friend(userId, friendId):
 @app.route('/profile/friends/ignore-friend/<userId>/<friendId>', methods=['POST'])
 @login_required
 def ignore_friend(userId, friendId):
+    """ Profile post method to ignore a friend request """
     request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId).first()
     request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId).first()
 
@@ -205,6 +228,7 @@ def ignore_friend(userId, friendId):
 @app.route('/profile/friends/cancel/<userId>/<friendId>', methods=['POST'])
 @login_required
 def cancel_request(userId, friendId):
+    """ Profile post method to cancel a friend request """
     request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId)
     request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId)
 
@@ -224,7 +248,7 @@ def cancel_request(userId, friendId):
 @app.route('/profile/friends/change-edit-status', methods=['POST'])
 @login_required
 def change_edit_status_friends():
-    """ Collection method to change edit status """
+    """ Profile post method to change friend request status """
     if 'edit_status_friends' in session:
         edit_status_friends = session['edit_status_friends']
         session['edit_status_friends'] = not edit_status_friends
@@ -237,6 +261,7 @@ def change_edit_status_friends():
 @app.route('/profile/friends/delete-friend/<userId>/<friendId>', methods=['POST'])
 @login_required
 def delete_friend(userId, friendId):
+    """ Profile post method to delete friend """
     # remove original request
     request = FriendRequest.query.filter_by(user_id=userId, friend_id=friendId)
     request2 = FriendRequest.query.filter_by(user_id=friendId, friend_id=userId)
@@ -268,9 +293,16 @@ def delete_friend(userId, friendId):
     return redirect(url_for('friends'))
 
 
+
+# ============================================================== #
+#                                                                #
+#                         Edit Profile                           #
+#                                                                #
+# ============================================================== #
 @app.route('/profile/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
+    """ Displays edit profile view """
     # edit profile view
     edit_cover_photo_form = EditCoverPhoto()
     edit_profile_picture_form = EditProfilePicture()
@@ -291,6 +323,7 @@ def edit_profile():
 @app.route('/profile/edit-profile/edit-profile-picture', methods=['POST'])
 @login_required
 def edit_profile_picture():
+    """ Profile post method to edit profile picture """
     edit_profile_picture_form = EditProfilePicture()
 
     if edit_profile_picture_form.validate_on_submit():
@@ -322,6 +355,7 @@ def edit_profile_picture():
 @app.route('/profile/edit-profile/edit-cover-photo', methods=['POST'])
 @login_required
 def edit_cover_photo():
+    """ Profile post method to edit cover photo """
     edit_cover_photo_form = EditCoverPhoto()
 
     if edit_cover_photo_form.validate_on_submit():
@@ -353,6 +387,7 @@ def edit_cover_photo():
 @app.route('/profile/edit-profile/edit-about/<userId>', methods=['POST'])
 @login_required
 def edit_about(userId):
+    """ Profile post method to edit about """
     edit_about_form = EditAbout()
 
     if edit_about_form.validate_on_submit():

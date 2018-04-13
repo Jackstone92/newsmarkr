@@ -24,6 +24,7 @@ from utils.scrape import article_meta_scrape, bbc_article_content_scrape
 @app.route('/social-feed', methods=['GET', 'POST'])
 @login_required
 def social():
+    """ Displays social view """
     form = PostForm()
     comment_form = CommentForm()
     share_url = None
@@ -56,7 +57,7 @@ def social():
 @app.route('/social-feed/<postId>', methods=['GET', 'POST'])
 @login_required
 def show_social_article(postId):
-    """ Social-Feed display page """
+    """ Social-Feed display article """
     comment_form = CommentForm()
     post = Post.query.filter_by(id=postId).first()
     article = None
@@ -75,6 +76,7 @@ def show_social_article(postId):
 @app.route('/social-feed/post', methods=['POST'])
 @login_required
 def social_post():
+    """ Social post method to make a post """
     form = PostForm()
     bookmark = None
 
@@ -175,6 +177,7 @@ def social_post():
 @app.route('/social-feed/<postId>/comment', methods=['POST'])
 @login_required
 def comment(postId):
+    """ Social post method to post a comment """
     comment_form = CommentForm()
 
     if comment_form.validate_on_submit():
@@ -205,7 +208,7 @@ def comment(postId):
 @app.route('/social-feed/<postId>/like', methods=['POST'])
 @login_required
 def increment_post_like(postId):
-    """ Social-Feed Post method to increment number of likes """
+    """ Social-Feed post method to increment number of likes """
     post = Post.query.filter_by(id=postId).first()
     post.num_likes += 1
     db.session.commit()
@@ -215,7 +218,7 @@ def increment_post_like(postId):
 @app.route('/social-feed/<postId>/dislike', methods=['POST'])
 @login_required
 def increment_post_dislike(postId):
-    """ Social-Feed Post method to increment number of dislikes """
+    """ Social-Feed post method to increment number of dislikes """
     post = Post.query.filter_by(id=postId).first()
     post.num_dislikes += 1
     db.session.commit()

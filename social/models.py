@@ -2,6 +2,7 @@ from flask_newsmarkr import db
 from datetime import datetime
 
 class Post(db.Model):
+    """ Model for post """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     collection_id = db.Column(db.Integer, db.ForeignKey('collection.id'))
@@ -45,6 +46,7 @@ class Post(db.Model):
 
 
 class Comment(db.Model):
+    """ Model for post comment """
     id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

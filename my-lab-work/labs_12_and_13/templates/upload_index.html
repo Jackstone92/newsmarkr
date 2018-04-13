@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<a href='/upload'>upload</a>
+
+{% for f in files %}
+
+<div class="row">
+  <div class="col-md-12"><img src="{{ f }}" /></div>
+</div>
+{% endfor %}
+
+{% endblock %}

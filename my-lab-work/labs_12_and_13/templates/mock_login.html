@@ -1,0 +1,18 @@
+{% extends "mock_login_base.html" %}
+
+{% block body %}
+  <form method='post'>
+      <input type="text" name="username" placeholder="username" />
+      <input type="password" name="password" placeholder="password" />
+      <input type="submit" value="Submit" />
+  </form>
+
+  {% for item in list %}
+    <div class="row">
+      <div class="col-md-4 h2">{{ item }}</div>
+      <div class="col-md-4"></div>
+      <div class="col-md-4"></div>
+    </div>
+  {% endfor %}
+
+{% endblock %}

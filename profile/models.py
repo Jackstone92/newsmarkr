@@ -139,6 +139,7 @@ NEWS_WEBSITE_LINKS = {
 
 
 class Friends(db.Model):
+    """ Model for profile friends """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     friend_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -156,6 +157,7 @@ class Friends(db.Model):
 
 
 class FriendRequest(db.Model):
+    """ Model for profile friend requests """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     friend_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -181,6 +183,7 @@ class FriendRequest(db.Model):
 
 
 class Profile(db.Model):
+    """ Model for profile """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     birthday = db.Column(db.Date)
