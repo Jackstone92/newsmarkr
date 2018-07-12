@@ -1,26 +1,7 @@
 # NewsmarkR Social News Sharing Platform
 
-<br/>
-
-## Table of Contents
-* [About](#about)
-  * [Application Summary](#application-summary)
-  * [Coursework Summary](#coursework-summary)
-* [Application Checklist](#application-checklist)
-  * [Main Checklist](#main-checklist)
-  * [Extras To Note](#extras-to-note)
-* [Application Login Credentials](#application-login-credentials)
-* [How To Run The App Locally](#how-to-run-the-app-locally)
-* [Accessing the NewsmarkR API](#accessing-api)
-* [Screenshots](#screenshots)
-* [Copyright Notes](#copyright-notes)
-
-<br/>
-
-<div id="about" />
 ## About
 
-<div id="about-summary" />
 ### Application Summary
 NewsmarkR is a social news sharing application that allows users to create an account, create a profile detailing their political interests, add profile pictures and cover photos, add friends and like, share, comment on and bookmark news headlines as they appear. It incorporates web scraping through the beautifulsoup4 module, allowing news stories to be scraped and converted into bookmarks. Users can create collections to organise their bookmarks and can join in the public discussion on all 'Browse Headlines' articles. Currently, the only supported website for web scraping is the BBC News website.
 
@@ -28,74 +9,7 @@ This flask application was built from scratch by myself and is separate from the
 
 In terms of my commit history, I have been working solidly on this application as I wanted to make it look as professional as possible. Further details can be found below.
 
-<div id="coursework-summary" />
-### Coursework Summary
-Regarding my coursework, I have included everything in the `/my-lab-work` folder. However, as I had initially created two separate Gitlab repos, the repo with my coursework commit history is here: http://gitlab.doc.gold.ac.uk/jston010/term-2-lab. I have followed along with all lab sessions, but my final application was created separately.
 
-<br/>
-
-<div id="application-checklist" />
-## Application Checklist
-<div id="main-checklist" />
-#### Main Checklist:
-- [x] It is a flask app
-  - There is more than one route and more than one view
-- [x] The html is rendered using jinja templates
-  - The jinja templates include some control structure(S) e.g. if/else, for/endfor **(They also include custom macros eg. _formhelpers.html for simpler rendering of WTForms)**
-- [x] It includes one or more forms
-  - The forms have some validation
-  - There are useful feedback messages to the user
-  - Using wtforms is not required but is recommended
-- [x] It has a database backend that implements CRUD operations
-  - The database can be mysql or mongodb **(MySQL was used)**
-  - The create & update operations take input data from a form or forms
-  - Using sqlalchemy is not required but will attract credit
-- [x] There is user authentication (i.e. logins)
-  - The login process uses sessions **(Username is stored in a session for validation)**
-  - Passwords should be stored as hashes **(Initially using bcrypt, then switched to werkzeug.security)**
-  - Using a salt is not required but is recommended **(Bcrypt salt was used before switch to werkzeug.security - see earlier commits)**
-  - There is a way to logout
-  - Use of flask-login is not required but is recommended
-- [x] There is a basic api i.e. content can be accessed as json via http methods
-  - It should be clear how to access the api (this could include comments in code) **(See below for all endpoints)**
-  - Additional credit will be given for an api that implements get, post, push and delete
-  - Use of flask-restful is not required but is recommended
-
-<div id="extras-to-note" />
-#### Extras To Note:
-- [x] Python best-practices design patterns followed
-  - Separation of concerns
-  - Divisional structure with MVP folder-structuring
-  - BEM CSS naming convention
-  - Split pip installs into requirements.txt file
-- [x] Incorporation of other modules into my application
-  - BeautifulSoup4
-  - Flask-Uploads
-  - Flask-Migrate
-  - Flask-Scripts Manager
-  - Bcrypt
-  - python-slugify
-  - geocoder
-- [x] Extensive use of WTForms
-  - HTML5 Inputs
-  - SelectionFields and MultipleSelectionFields
-- [x] Use of SQLAlchemy with Flask_Migrate
-- [x] Use of Flask-Scripts Manager
-  - For commands including `python manage.py runserver` and `python manage.py db migrate`
-
-<br/>
-
-<div id="application-login-credentials" />
-## Application Login Credentials
-Account login details for reviewing purposes:
-- Username: `test`
-- Password: `password`
-
-Or, feel free to create a new account and try things out for yourself!
-
-<br/>
-
-<div id="how-to-run-the-app-locally" />
 ## How to run the app locally
 1. Clone the repo
 2. Rename the repo folder to `flask_newsmarkr`
@@ -133,9 +47,7 @@ Or, feel free to create a new account and try things out for yourself!
 9. Run the server with the following command: `python manage.py runserver`
 10. Open http://localhost:8000 in Chrome
 
-<br/>
 
-<div id="accessing-api" />
 ## Accessing the NewsmarkR API
 
 Here is a table that contains all of NewsmarkR's API endpoints:
@@ -157,44 +69,38 @@ Here is a table that contains all of NewsmarkR's API endpoints:
 
 
 
-<br/>
+# Screenshots
 
-<div id="screenshots" />
-## Screenshots
-
-#### Landing Page
+### Landing Page
 ![Landing Page](my-lab-work/README_SCREENSHOTS/1_landing_page.png?raw=true "Landing Page")
 ---
 
-#### Login Page
+### Login Page
 ![Login Page](my-lab-work/README_SCREENSHOTS/2_login_page.png?raw=true "Login Page")
 ---
 
-#### Browse Headlines
+### Browse Headlines
 ![Browse Headlines](my-lab-work/README_SCREENSHOTS/3_browse_headlines.png?raw=true "Browse Headlines")
 ---
 
-#### Social Feed
+### Social Feed
 ![Social Feed](my-lab-work/README_SCREENSHOTS/4_social_feed.png?raw=true "Social Feed")
 ---
 
-#### Profile (Timeline)
+### Profile (Timeline)
 ![Profile Timeline](my-lab-work/README_SCREENSHOTS/5_profile_timeline.png?raw=true "Profile Timeline")
 ---
 
-#### Profile (About)
+### Profile (About)
 ![Profile About](my-lab-work/README_SCREENSHOTS/6_profile_about.png?raw=true "Profile About")
 ---
 
-#### Profile (Edit)
+### Profile (Edit)
 ![Profile Edit](my-lab-work/README_SCREENSHOTS/7_profile_edit.png?raw=true "Profile Edit")
 ---
 
 
 
-<br/>
-
-<div id="copyright-notes" />
 ## Copyright Notes
 - All images used in the making of this application were downloaded from [pixabay.com](http://www.pixabay.com) and are royalty-free.
 - BBC News articles are scraped and displayed using BeautifulSoup4 (I do not own any content)
