@@ -1,10 +1,4 @@
-# Term 2 Data Networks and the Web Final Project:
-
-### flask_newsmarkr - A Social News Sharing Platform
-##### Main Submission Repo: http://gitlab.doc.gold.ac.uk/jston010/dnw-term2-project
-##### Live server URL: http://doc.gold.ac.uk/usr/122
-
-NOTE: There has been an issue running the project on the virtual server due to the subpath /usr/122, since this effected flask's url_for functionality in views and templates along with the location of the 'static' folder. I tried to use a modified vs_url_for method, but as I was passing in arguments this didn't work either. I updated the method to accept `*args` and `*kwargs`, but this didn't help. I also tried spinning up an apache server and editing the config file with a WSGIScriptAlias, but that didn't help either. Strange results included html including links to /usr/122/usr/122 and /user/122 alike despite the same url_for method being called. All runs perfectly fine on localhost so I would appreciate if you could use follow the instructions [below](#how-to-run-the-app-locally) to get it running on localhost:8000 instead.
+# NewsmarkR Social News Sharing Platform
 
 <br/>
 
